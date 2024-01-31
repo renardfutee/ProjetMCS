@@ -5,8 +5,8 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username);
 int main(int argc, char *argv[]){
 
     struct sockaddr_in svc, clt;
-		socklen_t cltLen;
-		sock_t se; 
+	socklen_t cltLen;
+	sock_t se; 
     char username[MAX_BUFF];
     printf("Client\n"); 
 		
@@ -17,18 +17,14 @@ int main(int argc, char *argv[]){
         sscanf(argv[1], "%s", username);
     }
     
-
     printf("Bienvenue %s\n", username);
-
-
-		//void envoyer(socket_t sock, generic quoi, pfct serial, ...)
 		
-		// Création de la socket de connection au systme 
-		se = creerSocketConnect("127.0.0.1", 5000); 
+	// Création de la socket de connection au systme 
+	se = creerSocketConnect("127.0.0.1", 5000); 
 		
-		// Dialogue avec le serveur
-		dialogueSrv (se, &svc, username);
-		fermerSocket(se);
+	// Dialogue avec le serveur
+	dialogueSrv (se, &svc, username);
+	fermerSocket(se);
 }
 
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
