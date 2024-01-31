@@ -51,17 +51,38 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
         break; 
         case 0: 
             printf("Connexion à votre compte\n"); 
-            choix = displayMenu();
             
-
-
+            
         break; 
         default: 
             printf("Connexion impossible\n");
-            exit(1);
+            exit(-1);
         break; 
     }
 	
+    choix = displayMenu();
+
+    switch(choix) {
+        case 1: 
+            printf("Création d'une nouvelle partie\n");
+            affichageJoueur();
+        break; 
+        case 2: 
+            printf("Option 2\n"); 
+        break; 
+        case 3: 
+            printf("Option 3\n"); 
+        break; 
+        case 4: 
+            printf("Exit\n"); 
+            exit(-1);
+        break; 
+        default: 
+            printf("Choix impossible\n"); 
+        break; 
+    }
+
+
 	// do {
 	// 	printf("Choisir le message :\n");
 	// 	printf("1 : %s\n", MSG); 
