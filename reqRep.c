@@ -9,6 +9,6 @@ int connect(char *pseudo)
 }
 
 
-affichageJoueur(){
-    
+void affichageJoueur(){
+
 }

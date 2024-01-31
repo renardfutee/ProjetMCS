@@ -71,7 +71,7 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     switch(choix) {
         case 1: 
             printf("Création d'une nouvelle partie\n");
-            affichageJoueur();
+            //affichageJoueur();
         break; 
         case 2: 
             printf("Option 2\n"); 
@@ -120,6 +120,9 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 }
 
 int displayMenu() {
+
+    int choix;
+
     printf("Menu:\n");
     printf("1. Créer une nouvelle partie\n");
     printf("2. Option 2\n");

@@ -1,3 +1,6 @@
+#ifndef SESSION_H
+#define SESSION_H
+
 #define MAX_BUFF 1024
 
 typedef struct {
@@ -6,11 +9,10 @@ typedef struct {
     struct sockaddr_in addrSrv;  
 } sock_t;
 
-typedef struct req_t {
-  char msg[MAX_BUFF];
-  int nb;
+typedef struct {
+	int nb; 
+	char msg[MAX_BUFF]; 
 } req_t;
-
 /********************************************************************************************************************************************************************************************************
 	fonction	:	sock_t creerSocket(int mode)
 	brief		: 	Fonction de créationo dune socket dans un mode donné	
@@ -107,3 +109,4 @@ void recevoirMessDGRAM(sock_t sock, char *msg);
 ********************************************************************************************************************************************************************************************************/
 void envoyerMessDGRAM(sock_t sock, char *msg); 
 
+#endif /* SESSION_H */
