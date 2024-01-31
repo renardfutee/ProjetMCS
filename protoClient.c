@@ -40,6 +40,10 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     strcpy(requete.msg, username); 
 
     envoyer(sd, &requete, serial); 
+
+    requete.nb = 002;
+    strcpy(requete.msg, "nfenfuebfube"); 
+    envoyer(sd, &requete, serial); 
 	
 	// do {
 	// 	printf("Choisir le message :\n");
