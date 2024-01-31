@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
 		se = creerSocketConnect("127.0.0.1", 5000); 
 		
 		// Dialogue avec le serveur
-		dialogueSrv (se, &svc, &username);
+		dialogueSrv (se, &svc, username);
 		fermerSocket(se);
 }
 
