@@ -4,6 +4,8 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#include "StreamInc.h" 
+
 #define MAX_BUFF 1024
 
 typedef struct {
