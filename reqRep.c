@@ -7,3 +7,8 @@
 int connect(char *pseudo)
 {
 }
+
+
+affichageJoueur(){
+    
+}
