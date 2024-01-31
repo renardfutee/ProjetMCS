@@ -1,8 +1,9 @@
 #include "proto.h"
 
+void dialogueClt (sock_t sd, struct sockaddr_in clt); 
+
 int main()
 {		
-	int nbClient = 0; 
 	char buffer[MAX_BUFF];
 	struct sockaddr_in svc, clt, addrSrv;
 	socklen_t cltLen, lenAddr = sizeof(struct sockaddr_un);
@@ -18,18 +19,14 @@ int main()
 	while (1) {
 		// Attente d’un appel
 		sd = creerSocketEchange(se, "127.0.0.1", 5000, &clt); 
-		nbClient ++; 
-		
 		CHECK(pidFils = fork(), "fork"); 
+		
 		if (pidFils == 0){
-			// procFils(se, sd, clt); 
-			PAUSE("1 client reçu"); 
 			// FERMER LA SOCKET D'ECOUTE 
 			fermerSocket(se); 
 			
 			// Dialogue avec le client
-			//dialogueClt (nbClient, sd , clt);
-			printf("UN CLIENT RECU\n\n"); 
+			dialogueClt (sd , clt);
 			// FEMRER LA SOCKET D'ECHANGE
 			fermerSocket(sd); 
 			exit(0); 
@@ -40,4 +37,16 @@ int main()
 	}
 	// FERMER LA SOCKET D'ECOUTE 
 	fermerSocket(se); 
+}
+
+void dialogueClt (sock_t sd, struct sockaddr_in clt) 
+{
+	int choix; 
+	req_t requete; 
+	
+	 do {
+		recevoir (sd, &requete, deSerial); 		
+		printf("Message du client :: "); 
+		printf("%d : %s\n", requete.nb, requete.msg); 
+	} while ( requete.nb != 0);
 }
