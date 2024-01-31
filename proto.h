@@ -1,12 +1,15 @@
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h> 
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/un.h>
-#include <unistd.h>
-
 #include "data.h"
+// main()
+
+// // protoApp (dialogue C/S & dialogie utilsateur)
+
+
+// serveur()/client()
+// dialogueClt /dialogueSrv : structure requete/réponse pour initier des requête et recevoir des réponses
+
+
+// // coreApp (traitement requetes & traitement des réponses)
+// traiterReq1() etc
+// traiterRep1() etc
+
+// traiterRequets() / traiterRéponses() // multplexeurs

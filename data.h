@@ -1,3 +1,5 @@
+#ifndef DATA_H
+#define DATA_H
 #include "session.h"
 
 #define MAX_BUFF 1024
@@ -40,3 +42,5 @@ void serial(generic quoi, generic buff);
 	result		: 	
 ********************************************************************************************************************************************************************************************************/
 void deSerial(generic quoi, generic buff); 
+
+#endif /* DATA_H */

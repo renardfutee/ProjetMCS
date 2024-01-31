@@ -1,3 +1,9 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <arpa/inet.h>
+
 #include "data.h"
 
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username);
