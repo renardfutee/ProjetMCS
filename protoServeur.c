@@ -41,6 +41,7 @@ int main()
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt) 
 {
+	int compteur = 0; 
 	int choix; 
 	req_t requete; 
 	
@@ -48,5 +49,5 @@ void dialogueClt (sock_t sd, struct sockaddr_in clt)
 		recevoir (sd, &requete, deSerial); 		
 		printf("Message du client :: "); 
 		printf("%d : %s\n", requete.nb, requete.msg); 
-	} while ( requete.nb != 0);
+	} while ( requete.nb != -1);
 }
