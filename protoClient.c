@@ -39,7 +39,7 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     requete.nb = 001;
     strcpy(requete.msg, username); 
 
-
+    envoyer(sd, &requete, serial); 
 	
 	// do {
 	// 	printf("Choisir le message :\n");
