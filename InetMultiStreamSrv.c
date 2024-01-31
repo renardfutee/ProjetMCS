@@ -75,6 +75,7 @@ void procFils(int se, int sd, struct sockaddr_in clt)
 	exit(NULL); 
 }
 
+/*
 void dialogueClt (int sd, struct sockaddr_in clt) {
 	char requete[MAX_BUFF];
 	do {
@@ -93,6 +94,19 @@ void dialogueClt (int sd, struct sockaddr_in clt) {
 			break;
 		}
 	} while ( atoi(requete) != 0);
+} */
+
+void dialogueClt(int sd, struct sockaddr_in clt) {
+    char username[MAX_BUFF];
+    
+    // Lire le nom d'utilisateur envoyé par le client
+    read(sd, username, sizeof(username));
+    printf("Nom d'utilisateur reçu : %s\n", username);
+
+    // Envoyer un message de bienvenue avec le nom d'utilisateur
+    char welcomeMsg[MAX_BUFF];
+    snprintf(welcomeMsg, sizeof(welcomeMsg), "Bienvenue, joueur %s !", username);
+    write(sd, welcomeMsg, strlen(welcomeMsg) + 1);
 }
 
 void traiterCHLD (int sig) {
