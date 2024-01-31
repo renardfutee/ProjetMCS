@@ -1,8 +1,8 @@
-clt: useLibNet.c session.c data.c
-	gcc -o clt useLibNet.c session.c data.c -DCLIENT
+clt: protoClient.c session.c data.c
+	gcc -o clt protoClient.c session.c data.c -DCLIENT
 
-srv: useLibNet.c session.c data.c
-	gcc -o svc useLibNet.c session.c data.c -DSERVEUR
+srv: protoServeur.c session.c data.c
+	gcc -o svc protoServeur.c session.c data.c -DSERVEUR
 
 trouverFichier: trouverfichier.c
 	gcc -o trouverFichier trouverfichier.c -ljansson
