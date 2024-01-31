@@ -40,6 +40,30 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     requete.nb = 002;
     strcpy(requete.msg, "nfenfuebfube"); 
     envoyer(sd, &requete, serial); 
+
+    recevoir(sd, &requete, deSerial);
+    printf("Reponse : %s\n", requete.msg);
+
+    // switch(choix) {
+	// 		case 1: 
+	// 			requete.nb = 100; 
+	// 			strcpy(requete.msg, "Je dis que \"le fond de l’eau est clair par ici ! Où ça ?\"");
+	// 		break;
+	// 		case 2: 
+	// 			requete.nb = 200; 
+	// 			strcpy(requete.msg, "Requête ou réponse non reconnue !");
+	// 		break; 
+	// 		case 3:
+	// 			requete.nb = 000; 
+	// 			strcpy(requete.msg, "Au revoir et à bientôt ...");
+	// 		break; 
+	// 		default: 
+	// 			printf("Choix impossible, fin\n"); 
+	// 		break; 
+	// 	}
+		
+	// 	envoyer(sd, &requete, serial); 
+	// } while(choix != 3); 
 	
 	// do {
 	// 	printf("Choisir le message :\n");
