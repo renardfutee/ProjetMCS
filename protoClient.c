@@ -44,26 +44,23 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     recevoir(sd, &requete, deSerial);
     printf("Reponse : %s\n", requete.msg);
 
-    // switch(choix) {
-	// 		case 1: 
-	// 			requete.nb = 100; 
-	// 			strcpy(requete.msg, "Je dis que \"le fond de l’eau est clair par ici ! Où ça ?\"");
-	// 		break;
-	// 		case 2: 
-	// 			requete.nb = 200; 
-	// 			strcpy(requete.msg, "Requête ou réponse non reconnue !");
-	// 		break; 
-	// 		case 3:
-	// 			requete.nb = 000; 
-	// 			strcpy(requete.msg, "Au revoir et à bientôt ...");
-	// 		break; 
-	// 		default: 
-	// 			printf("Choix impossible, fin\n"); 
-	// 		break; 
-	// 	}
-		
-	// 	envoyer(sd, &requete, serial); 
-	// } while(choix != 3); 
+    switch(requete.nb) {
+        case 1: 
+            printf("Création nouvel utilisateur\n"); 
+
+        break; 
+        case 0: 
+            printf("Connexion à votre compte\n"); 
+            choix = displayMenu();
+            
+
+
+        break; 
+        default: 
+            printf("Connexion impossible\n");
+            exit(1);
+        break; 
+    }
 	
 	// do {
 	// 	printf("Choisir le message :\n");
@@ -93,4 +90,17 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 		
 	// 	envoyer(sd, &requete, serial); 
 	// } while(choix != 3); 
+}
+
+int displayMenu() {
+    printf("Menu:\n");
+    printf("1. Créer une nouvelle partie\n");
+    printf("2. Option 2\n");
+    printf("3. Option 3\n");
+    printf("4. Exit\n");
+
+    printf(" \n Choix : ");
+    scanf("%d", &choix);
+
+    return choix;
 }
