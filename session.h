@@ -6,11 +6,6 @@ typedef struct {
     struct sockaddr_in addrSrv;  
 } sock_t;
 
-typedef struct req_t {
-  char msg[MAX_BUFF];
-  int nb;
-} req_t;
-
 /********************************************************************************************************************************************************************************************************
 	fonction	:	sock_t creerSocket(int mode)
 	brief		: 	Fonction de créationo dune socket dans un mode donné	

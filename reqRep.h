@@ -1,9 +1,29 @@
-/********************************************************************************************************************************************************************************************************
-	fonction	:	int connect(char *pseudo); 
-	brief		: 	Connecte ou crée l'utilisateur depuis son pseudo 
-	param		: 	pseudo = pseudo de connection de l'utilisateur 
-	result		: 	retourn 1 si un nouel utilisateur a été créé, 0 si l'utilisateur existait et -1 en cas d'erreur 
-********************************************************************************************************************************************************************************************************/
-int connect(char *pseudo); 
+#include <stdio.h>
 
-affichageJoueur();
+#define MAX_SIZE 200
+
+typedef void * generic;
+typedef char buff_t[MAX_SIZE]; 
+
+typedef struct req_t {
+  char msg[MAX_SIZE];
+  int nb;
+} reqSimple_t;
+
+
+/********************************************************************************************************************************************************************************************************
+	fonction	:	void serial(generic quoi, generic buff); 
+	brief		: 	Serialise une requête 
+	param		: 	generic quoi = requete à sérialiser 
+				generic buff = requete serialisée
+	result		: 	
+********************************************************************************************************************************************************************************************************/
+void serial(generic quoi, generic buff); 
+/********************************************************************************************************************************************************************************************************
+	fonction	:	void deSerial(generic quoi, generic buff); 
+	brief		: 	Deserialise une requête 
+	param		: 	generic quoi = requete à desérialiser 
+				generic buff = requete deserialisée
+	result		: 	
+********************************************************************************************************************************************************************************************************/
+void deSerial(generic quoi, generic buff); 

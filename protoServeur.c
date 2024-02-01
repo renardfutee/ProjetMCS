@@ -11,6 +11,7 @@
 
 #include "StreamInc.h"
 #include "data.h"
+#include "reqRep.h"
 //#include "proto.h"
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt); 
