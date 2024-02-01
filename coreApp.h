@@ -3,7 +3,8 @@
 
 // {
 //   "pseudos": ["bastian", "alexis", "lucie", "antoine", "rania"]
-// }// findRandomTheme() selectionne un theme au pif et surtout vérifie qu'il n'est pas déja utilisé donc deux fichiers json avec un thele
+// }
+// findRandomTheme() selectionne un theme au pif et surtout vérifie qu'il n'est pas déja utilisé donc deux fichiers json avec un thele
 
 // pseudo
 // reponsesthemes
