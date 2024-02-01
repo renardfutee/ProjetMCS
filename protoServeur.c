@@ -56,7 +56,7 @@ int main()
 void dialogueClt (sock_t sd, struct sockaddr_in clt) 
 {
 	int choix; 
-	req_t requete; 
+	reqSimple_t requete; 
 	
 	 do {
 		recevoir (sd, &requete, deSerial); 		
@@ -66,6 +66,9 @@ void dialogueClt (sock_t sd, struct sockaddr_in clt)
 		switch(requete.nb) {
 			case 1 :
 				printf("Demande de connection : \n"); 
+				
+				connexion(requete.msg); 
+				
 				requete.nb = 1; 
 				strcpy(requete.msg, "Utilisateur existant connecté\n"); 
 				envoyer(sd, &requete, serial); 
