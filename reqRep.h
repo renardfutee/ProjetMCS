@@ -1,7 +1,4 @@
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <string.h>
-
+#include "coreApp.h"
 #include "data.h"
 
 #define MAX_SIZE 200
@@ -9,13 +6,18 @@
 typedef void * generic;
 typedef char buff_t[MAX_SIZE]; 
 
-typedef struct req_t {
+typedef struct reqSimple_t {
   char msg[MAX_SIZE];
   int nb;
 } reqSimple_t;
 
+typedef struct rep {
+  int nb;
+} rep;
+
 
 void sendRequete(sock_t sd, char *typeRequete, generic attr1);  
+reqSimple_t receiveRequete(sock_t sd); 
 /********************************************************************************************************************************************************************************************************
 	fonction	:	void serial(generic quoi, generic buff); 
 	brief		: 	Serialise une requête 

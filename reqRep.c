@@ -1,5 +1,8 @@
-#include "reqRep.h"
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "reqRep.h"
 
 void sendRequete(sock_t sd, char *typeRequete, generic attr1)
 {
@@ -12,6 +15,22 @@ void sendRequete(sock_t sd, char *typeRequete, generic attr1)
 	}
 	
 	envoyer(sd, &requete, serial); 
+}
+
+reqSimple_t receiveRequete(sock_t sd)
+{
+	reqSimple_t req; 
+
+	recevoir (sd, &req, deSerial); 	
+	
+	switch(req.nb){
+		case 1:
+			//printf("Demande de connexion de l'utilisateur %s\n", req.msg); 
+			connexion();
+		break; 
+	}
+		
+	return req; 
 }
 
 /********************************************************************************************************************************************************************************************************
