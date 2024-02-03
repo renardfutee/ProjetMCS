@@ -67,7 +67,7 @@ void dialogueClt (sock_t sd, struct sockaddr_in clt)
 			case 1 :
 				printf("Demande de connection : \n"); 
 				
-				connexion(requete.msg); 
+				//sendRequete(sd, "connect\0", )
 				
 				requete.nb = 1; 
 				strcpy(requete.msg, "Utilisateur existant connecté\n"); 
