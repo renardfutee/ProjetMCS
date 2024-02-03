@@ -44,6 +44,9 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
     	requete.nb = -1;
     	strcpy(requete.msg, "nfenfuebfube"); 
     	envoyer(sd, &requete, serial); 
+
     	recevoir(sd, &requete, deSerial);
     	printf("Reponse : %s\n", requete.msg);
 }
+
+

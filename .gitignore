@@ -1,1 +1,11 @@
-/jsons
+*.exe
+*.o
+*.out
+
+svc
+clt
+trouverFichier
+coreApp
+test
+
+test.c

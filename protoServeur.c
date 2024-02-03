@@ -10,7 +10,6 @@
 #include <unistd.h>
 
 #include "StreamInc.h"
-#include "data.h"
 #include "reqRep.h"
 //#include "proto.h"
 
