@@ -26,7 +26,11 @@ reqSimple_t receiveRequete(sock_t sd)
 	switch(req.nb){
 		case 1:
 			//printf("Demande de connexion de l'utilisateur %s\n", req.msg); 
+<<<<<<< HEAD
 			connexion(req.msg);
+=======
+			connexion("jonathan");
+>>>>>>> 586a7cdf6e6fe33df306feb0d2422cbc748dc9f4
 		break; 
 	}
 		
