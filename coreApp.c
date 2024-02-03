@@ -9,35 +9,9 @@
 
 #define MAX_PSEUDO_LENGTH 50
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 void removeAccentsAndUppercase(char *str)
 {
-    int i, j = 0;
-    char accents[] = "ÀÁÂÃÄÅàáâãäåÈÉÊËèéêëÌÍÎÏìíîïÒÓÔÕÖØòóôõöøÙÚÛÜùúûüÝŸýÿÇç";
-    char replacements[] = "AAAAAAaaaaaaEEEEeeeeIIIIiiiiOOOOOOooooooUUUUuuuuYYyyCc";
-
-    // Supprimer les accents
-    for (i = 0; str[i] != '\0'; i++)
-    {
-        char c = str[i];
-        char *accentPtr = strchr(accents, c);
-        printf("%c\t",str[j]);
-        if (accentPtr != NULL)
-        {
-            int index = accentPtr - accents;
-            str[j] = replacements[index];
-        }
-        else
-        {
-            str[j] = c;
-        }
-        printf("%c\t",str[j]);
-        j++;
-    }
-    str[j] = '\0';
+    int i;
 
     // Convertir en minuscules
     for (i = 0; str[i] != '\0'; i++)
@@ -414,7 +388,7 @@ int main()
     // // Exemple d'utilisation de la fonction creategame
     // creategame("lucie","antoine");
 
-    int points = chercherMotDansJSON("PaysCommencantparP", "PÉROU");
+    int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
     printf("Points : %d\n", points);
 
     return 0;
