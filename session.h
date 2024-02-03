@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 #ifndef SESSION_H
 #define SESSION_H
 
-=======
->>>>>>> 7f6fbb2 (J'ai réparé toute la merde)
 #define MAX_BUFF 1024
 
 typedef struct {

@@ -6,10 +6,11 @@
 // }
 // findRandomTheme() selectionne un theme au pif et surtout vérifie qu'il n'est pas déja utilisé donc deux fichiers json avec un thele
 
+// 
 // pseudo
 // reponsesthemes
-// themes
 // match
+//
 
 /**
  * @brief 
@@ -25,3 +26,11 @@ int connexion(const char * pseudo);
  * @return char 
  */
 char* findRandomTheme();
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @param recherchePseudo 
+ */
+void creategame(const char* connected_pseudo, const char* recherchePseudo);
