@@ -26,7 +26,7 @@ reqSimple_t receiveRequete(sock_t sd)
 	switch(req.nb){
 		case 1:
 			//printf("Demande de connexion de l'utilisateur %s\n", req.msg); 
-			connexion();
+			connexion("jonathan");
 		break; 
 	}
 		
