@@ -1,38 +1,38 @@
 {
   "PaysCommencantparP": {
     "portugal": 1,
-    "Pakistan": 1,
-    "Pérou": 2,
-    "Pologne": 3
+    "pologne": 1,
+    "perou": 2,
+    "pakistan": 3
   },
   "FruitsJaunes": {
-    "Citron": 1,
+    "citron": 1,
     "banane": 1,
     "melon": 2,
     "mirabelle": 3
   },
   "TransportEnCommun": {
-    "Voiture": 1,
-    "Avion": 1,
-    "Hoverboard": 2,
-    "Tandem": 3
+    "voiture": 1,
+    "avion": 1,
+    "hoverboard": 2,
+    "tandem": 3
   },
   "ChosesIndispensablesEnVacances": {
     "valise": 1,
-    "vétêment": 1,
-    "crème solaire": 2,
-    "Passeport": 3
+    "vetement": 1,
+    "creme solaire": 2,
+    "passeport": 3
   },
   "JoueursEDF": {
-    "Mbappé": 1,
-    "Griezmann": 1,
-    "Aréola": 2,
-    "Veretout": 3
+    "mbappe": 1,
+    "griezmann": 1,
+    "areola": 2,
+    "veretout": 3
   },
   "MarqueChaussure": {
-    "Nike": 1,
-    "Adidas": 1,
-    "Asics": 2,
-    "Caterpillar": 3
+    "nike": 1,
+    "adidas": 1,
+    "asics": 2,
+    "caterpillar": 3
   }
 }
