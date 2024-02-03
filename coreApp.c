@@ -46,7 +46,7 @@ void ajouterPseudo(json_t *pseudosArray, const char *pseudo)
     json_array_append_new(pseudosArray, json_string(pseudo));
 }
 
-int connexion(const char *pseudo)
+int connexion(const char * pseudo)
 {
     // Ouvrir le fichier JSON
     FILE *file = fopen("jsons/pseudos.json", "r");
