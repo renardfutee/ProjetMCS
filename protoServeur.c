@@ -11,7 +11,10 @@
 
 #include "StreamInc.h"
 #include "data.h"
+<<<<<<< HEAD
 #include "reqRep.h"
+=======
+>>>>>>> 7f6fbb2 (J'ai réparé toute la merde)
 //#include "proto.h"
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt); 

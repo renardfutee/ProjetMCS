@@ -10,3 +10,18 @@
 // reponsesthemes
 // themes
 // match
+
+/**
+ * @brief 
+ * 
+ * @param pseudo 
+ * @return int 
+ */
+int connexion(const char * pseudo);
+
+/**
+ * @brief 
+ * 
+ * @return char 
+ */
+char* findRandomTheme();

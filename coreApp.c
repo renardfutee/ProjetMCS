@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <jansson.h>
 #include <string.h>
+#include <time.h>
+
+#include "coreApp.h"
 
 #define MAX_PSEUDO_LENGTH 50
 
@@ -73,11 +76,72 @@ int connexion(const char *pseudo) {
     return 1;
 }
 
+// Fonction pour trouver un thème aléatoire dans le fichier JSON
+char* findRandomTheme() {
+    // Ouvrir le fichier JSON
+    FILE *file = fopen("jsons/reponsestheme.json", "r");
+    if (file == NULL) {
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
+        return NULL;
+    }
+
+    // Charger le contenu du fichier JSON
+    json_t *root;
+    json_error_t error;
+    root = json_loadf(file, 0, &error);
+    fclose(file);
+
+    // Vérifier si le fichier JSON est correctement chargé
+    if (!root) {
+        fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
+        return NULL;
+    }
+
+    // Extraire les thèmes du fichier JSON
+    json_t *themesObj = root;
+    if (!themesObj || !json_is_object(themesObj)) {
+        fprintf(stderr, "Le fichier JSON ne contient pas d'objet.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    // Extraire les clés (thèmes) du fichier JSON
+    size_t themesCount = json_object_size(themesObj);
+    const char **themes = (const char **)malloc(themesCount * sizeof(const char *));
+    size_t index = 0;
+    const char *theme;
+    json_t *themeValue;
+    json_object_foreach(themesObj, theme, themeValue) {
+        themes[index++] = theme;
+    }
+
+    // Fermer le fichier JSON
+    json_decref(root);
+
+    // Choisir un thème aléatoire
+    srand(time(NULL));
+    size_t randomIndex = rand() % themesCount;
+    char *randomTheme = strdup(themes[randomIndex]);
+
+    // Libérer la mémoire allouée
+    free(themes);
+
+    return randomTheme;
+}
+
 int main() {
     // Exemple d'utilisation
     connexion("lucie");  // Pseudo existant
     connexion("Jonathan");   // Pseudo ajouté
     connexion("ab");     // Pseudo trop court
+
+    char *randomTheme = findRandomTheme();
+    if (randomTheme) {
+        printf("Thème aléatoire : %s\n", randomTheme);
+        free(randomTheme);
+    } else {
+        printf("Erreur lors de la récupération du thème aléatoire.\n");
+    }
 
     return 0;
 }
