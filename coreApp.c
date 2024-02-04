@@ -85,7 +85,7 @@ int connexion(const char * pseudo)
     if (writeFile == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier en écriture.\n");
-        return 0;
+        return -1;
     }
 
     json_dumpf(root, writeFile, JSON_INDENT(2));
@@ -95,7 +95,7 @@ int connexion(const char * pseudo)
     json_decref(root);
 
     printf("Le pseudo '%s' a été ajouté avec succès.\n", pseudo);
-    return 1;
+    return 0;
 }
 
 // Fonction pour trouver un thème aléatoire dans le fichier JSON
@@ -362,7 +362,7 @@ int chercherMotDansJSON(const char *theme, const char *mot)
     json_decref(root);
 }
 
-int main()
+/*int main()
 {
     // // Exemple d'utilisation
     // connexion("lucie");  // Pseudo existant
@@ -388,8 +388,8 @@ int main()
     // // Exemple d'utilisation de la fonction creategame
     // creategame("lucie","antoine");
 
-    int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
-    printf("Points : %d\n", points);
+   // int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
+    //printf("Points : %d\n", points);
 
-    return 0;
-}
+    //return 0;
+}*/

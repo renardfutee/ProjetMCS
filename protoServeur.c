@@ -53,10 +53,17 @@ int main()
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt) 
 {
-	int choix; 
-	reqSimple_t requete; 
+	int choix;  
+	rep_t rep; 
 	
-	// Le serveur reçoit d'abord une demande de connection 
-	requete = receiveRequete(sd); 
+	// Le serveur reçoit d'abord une demande de connexion 
+	rep = receiveRequete(sd); 
+	sendRep(sd, rep); 
 	
+	do{
+		rep = receiveRequete(sd); 
+		sendRep(sd, rep); 
+	}while(rep.nb != -100); 
+	
+	exit(0); 
 }
