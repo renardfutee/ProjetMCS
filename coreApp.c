@@ -24,8 +24,33 @@ void removeAccentsAndUppercase(char *str)
 }
 
 // Fonction pour rechercher un pseudo dans la liste
-int recherchePseudo(json_t *pseudosArray, const char *pseudo)
+int recherchePseudo(const char *pseudo)
 {
+
+    // Ouvrir le fichier JSON
+    FILE *file = fopen("jsons/pseudos.json", "r");
+    if (file == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier.\n");
+        return 0;
+    }
+
+    // Charger le contenu du fichier JSON
+    json_t *root;
+    json_error_t error;
+    root = json_loadf(file, 0, &error);
+    fclose(file);
+
+    // Vérifier si le pseudo est valide
+    if (strlen(pseudo) < 3)
+    {
+        printf("Le pseudo doit avoir au moins 3 lettres.\n");
+        return 0;
+    }
+
+    // Vérifier si le pseudo existe déjà
+    json_t *pseudosArray = json_object_get(root, "pseudos");
+
     size_t index;
     json_t *value;
 
@@ -45,8 +70,32 @@ int recherchePseudo(json_t *pseudosArray, const char *pseudo)
 }
 
 // Fonction pour ajouter un pseudo à la liste
-void ajouterPseudo(json_t *pseudosArray, const char *pseudo)
+void ajouterPseudo(const char *pseudo)
 {
+    // Ouvrir le fichier JSON
+    FILE *file = fopen("jsons/pseudos.json", "r");
+    if (file == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier.\n");
+        return 0;
+    }
+
+    // Charger le contenu du fichier JSON
+    json_t *root;
+    json_error_t error;
+    root = json_loadf(file, 0, &error);
+    fclose(file);
+
+    // Vérifier si le pseudo est valide
+    if (strlen(pseudo) < 3)
+    {
+        printf("Le pseudo doit avoir au moins 3 lettres.\n");
+        return 0;
+    }
+
+    // Vérifier si le pseudo existe déjà
+    json_t *pseudosArray = json_object_get(root, "pseudos");
+
     // Ajouter le nouveau pseudo à la liste
     json_array_append_new(pseudosArray, json_string(pseudo));
 }
@@ -186,7 +235,6 @@ char *get_random_pseudo(const char *connected_pseudo)
 
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS ///////////////////////////////////////////////////////////////////////////////
 
-
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
 
 // Fonction pour se connecter avec le nom du pseudo
@@ -215,14 +263,14 @@ int connexion(const char *pseudo)
 
     // Vérifier si le pseudo existe déjà
     json_t *pseudosArray = json_object_get(root, "pseudos");
-    if (recherchePseudo(pseudosArray, pseudo))
+    if (recherchePseudo(pseudo))
     {
         printf("Le pseudo '%s' existe déjà.\n", pseudo);
         return 1;
     }
 
     // Ajouter le nouveau pseudo
-    ajouterPseudo(pseudosArray, pseudo);
+    ajouterPseudo(pseudo);
 
     // Enregistrer les modifications dans le fichier JSON
     FILE *writeFile = fopen("jsons/pseudos.json", "w");
@@ -243,12 +291,14 @@ int connexion(const char *pseudo)
 }
 
 // Fonction pour afficher tous les pseudos
-void fetchAllPlayers() {
+char *fetchAllPlayers(const char *pseudoconnecte)
+{
     // Charger le fichier JSON
     FILE *file = fopen("jsons/pseudos.json", "r");
-    if (!file) {
+    if (!file)
+    {
         fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
-        return;
+        return NULL;
     }
 
     // Obtenir la taille du fichier
@@ -258,10 +308,11 @@ void fetchAllPlayers() {
 
     // Allouer de la mémoire pour stocker le contenu du fichier
     char *buffer = (char *)malloc(size + 1);
-    if (!buffer) {
+    if (!buffer)
+    {
         fprintf(stderr, "Erreur d'allocation de mémoire.\n");
         fclose(file);
-        return;
+        return NULL;
     }
 
     // Lire le contenu du fichier dans le buffer
@@ -280,31 +331,75 @@ void fetchAllPlayers() {
     free(buffer);
 
     // Vérifier les erreurs lors du chargement du JSON
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur lors du chargement du JSON : %s\n", error.text);
-        return;
+        return NULL;
     }
 
     // Accéder au tableau de pseudos
     json_t *pseudos = json_object_get(root, "pseudos");
-    if (!json_is_array(pseudos)) {
+    if (!json_is_array(pseudos))
+    {
         fprintf(stderr, "Le champ 'pseudos' n'est pas un tableau.\n");
         json_decref(root);
-        return;
+        return NULL;
     }
 
-    // Parcourir le tableau de pseudos et afficher chaque pseudo
+    // Compter le nombre de pseudos
+    size_t numPlayers = json_array_size(pseudos);
+
+    // Allouer de l'espace pour le tableau de pointeurs de chaînes de caractères
+    char **pseudoArray = (char **)malloc((numPlayers + 1) * sizeof(char *));
+    if (!pseudoArray)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire pour le tableau de pseudos.\n");
+        // Libérer la mémoire utilisée par le JSON
+        json_decref(root);
+        return NULL;
+    }
+
+    // Parcourir le tableau de pseudos et ajouter chaque pseudo au tableau
     size_t index;
     json_t *value;
-    json_array_foreach(pseudos, index, value) {
-        if (json_is_string(value)) {
+    for (index = 0; index < numPlayers; index++)
+    {
+        value = json_array_get(pseudos, index);
+        if (json_is_string(value))
+        {
             const char *pseudo = json_string_value(value);
-            printf("Pseudo %lu: %s\n", index + 1, pseudo);
+
+            if (pseudoconnecte != NULL && strcmp(pseudo, pseudoconnecte) == 0)
+            {
+                continue;
+            }
+
+            // Allouer de l'espace pour le pseudo actuel
+            pseudoArray[index] = strdup(pseudo);
+            if (!pseudoArray[index])
+            {
+                fprintf(stderr, "Erreur d'allocation de mémoire pour un pseudo.\n");
+                // Libérer la mémoire utilisée par les pseudos déjà ajoutés
+                for (size_t i = 0; i < index; i++)
+                {
+                    free(pseudoArray[i]);
+                }
+                // Libérer la mémoire utilisée par le tableau de pseudos
+                free(pseudoArray);
+                // Libérer la mémoire utilisée par le JSON
+                json_decref(root);
+                return NULL;
+            }
         }
     }
 
+    // Marquer la fin du tableau avec NULL
+    pseudoArray[numPlayers] = NULL;
+
     // Libérer la mémoire utilisée par le JSON
     json_decref(root);
+
+    return pseudoArray;
 }
 
 // Fonction pour créer une nouvelle partie et enregistrer les modifications dans le fichier JSON
@@ -331,8 +426,8 @@ void creategame(const char *connected_pseudo, const char *recherchePseudo)
     }
 
     // Obtient un pseudo aléatoire pour l'adversaire
-    // char* adversary_pseudo = get_random_pseudo(connected_pseudo);
-    char *adversary_pseudo = recherchePseudo;
+    char* adversary_pseudo = get_random_pseudo(connected_pseudo);
+    // char *adversary_pseudo = recherchePseudo;
     if (!adversary_pseudo)
     {
         fprintf(stderr, "Erreur lors de la recherche d'un adversaire.\n");
@@ -439,44 +534,64 @@ int chercherMotDansJSON(const char *theme, const char *mot)
     json_decref(root);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
 
-int main()
-{
-    // // Exemple d'utilisation
-    // connexion("lucie");  // Pseudo existant
-    // connexion("Jonathan");   // Pseudo ajouté
-    // connexion("ab");     // Pseudo trop court
+// int main()
+// {
+//     // // Exemple d'utilisation
+//     // connexion("lucie");  // Pseudo existant
+//     // connexion("Jonathan");   // Pseudo ajouté
+//     // connexion("ab");     // Pseudo trop court
 
-    // char *randomTheme = findRandomTheme();
-    // if (randomTheme) {
-    //     printf("Thème aléatoire : %s\n", randomTheme);
-    //     free(randomTheme);
-    // } else {
-    //     printf("Erreur lors de la récupération du thème aléatoire.\n");
-    // }
+//     // char *randomTheme = findRandomTheme();
+//     // if (randomTheme) {
+//     //     printf("Thème aléatoire : %s\n", randomTheme);
+//     //     free(randomTheme);
+//     // } else {
+//     //     printf("Erreur lors de la récupération du thème aléatoire.\n");
+//     // }
 
-    // const char* connected_player = "lucie";
+//     // const char* connected_player = "lucie";
 
-    // char* random_pseudo = get_random_pseudo(connected_player);
-    // if (random_pseudo) {
-    //     printf("Pseudo aléatoire pour le joueur connecté : %s\n", random_pseudo);
-    //     free(random_pseudo);
-    // }
+//     // char* random_pseudo = get_random_pseudo(connected_player);
+//     // if (random_pseudo) {
+//     //     printf("Pseudo aléatoire pour le joueur connecté : %s\n", random_pseudo);
+//     //     free(random_pseudo);
+//     // }
 
-    // // Exemple d'utilisation de la fonction creategame
-    // creategame("lucie","antoine");
+//     // // Exemple d'utilisation de la fonction creategame
+//     // creategame("lucie","antoine");
 
-    // int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
-    // printf("Points : %d\n", points);
+//     // int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
+//     // printf("Points : %d\n", points);
 
-    fetchAllPlayers();
+//     fetchAllPlayers();
+
+//     return 0;
+// }
+
+int main() {
+    char **pseudos = fetchAllPlayers("Achrafe\n");
+
+    if (pseudos) {
+        printf("Liste des pseudos :\n");
+
+        // Afficher les pseudos jusqu'à ce que NULL soit rencontré
+        for (size_t i = 0; pseudos[i] != NULL; i++) {
+            printf("%s", pseudos[i]);
+        }
+
+        // Libérer la mémoire allouée pour les pseudos
+        for (size_t i = 0; pseudos[i] != NULL; i++) {
+            free(pseudos[i]);
+        }
+        free(pseudos); // Libérer la mémoire du tableau principal
+    } else {
+        printf("Erreur lors de la récupération des pseudos.\n");
+    }
 
     return 0;
 }
-
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
