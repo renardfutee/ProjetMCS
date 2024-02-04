@@ -11,7 +11,6 @@
 
 #include "StreamInc.h"
 #include "reqRep.h"
-//#include "proto.h"
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt); 
 
@@ -54,28 +53,17 @@ int main()
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt) 
 {
-	int choix; 
-	reqSimple_t requete; 
+	int choix;  
+	rep_t rep; 
 	
-	 do {
-		recevoir (sd, &requete, deSerial); 		
-		printf("Message du client :: "); 
-		printf("%d : %s\n", requete.nb, requete.msg); 
-		
-		switch(requete.nb) {
-			case 1 :
-				printf("Demande de connection : \n"); 
-				
-				connexion(requete.msg); 
-				
-				requete.nb = 1; 
-				strcpy(requete.msg, "Utilisateur existant connecté\n"); 
-				envoyer(sd, &requete, serial); 
-			break; 
-			case -1: 
-				printf("Déconnexion de l'utilisateur"); 
-			break; 
-		}
-		
-	} while ( requete.nb != -1);
+	// Le serveur reçoit d'abord une demande de connexion 
+	rep = receiveRequete(sd); 
+	sendRep(sd, rep); 
+	
+	do{
+		rep = receiveRequete(sd); 
+		sendRep(sd, rep); 
+	}while(rep.nb != -100); 
+	
+	exit(0); 
 }

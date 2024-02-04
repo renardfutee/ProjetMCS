@@ -19,8 +19,9 @@ void envoyer(sock_t sock, generic quoi, pfct serial, ...)
     	buffer_t buff;
     
     	if(sock.mode == SOCK_STREAM){
-        	if(serial == NULL)
+        	if(serial == NULL){
             		envoyerMessSTREAM(sock, (char *) quoi); 
+            	}
         	else { 
         		serial(quoi,buff);
         		envoyerMessSTREAM(sock,buff);

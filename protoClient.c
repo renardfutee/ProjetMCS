@@ -35,18 +35,30 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 	reqSimple_t requete; 
 
 	// L'utilisateur commence par se connecter ! 
-	sendRequete(sd, "connect\0", username);  
+	sendRequete(sd, CONNECT, username);  
+	receiveReponse(sd);
 	
-    	/*requete.nb = 001;
-    	strcpy(requete.msg, username); 
-    	envoyer(sd, &requete, serial); */
-
-    	requete.nb = -1;
-    	strcpy(requete.msg, "nfenfuebfube"); 
-    	envoyer(sd, &requete, serial); 
-
-    	recevoir(sd, &requete, deSerial);
-    	printf("Reponse : %s\n", requete.msg);
+	do{
+		printf("<--------------- MENU --------------->\n"); 
+		printf("0 - Quitter le jeu\n"); 
+		printf("1 - Commencer une nouvelle partie\n"); 
+		scanf("%d", &choix); 
+		
+		switch(choix){
+			case 0: 
+				printf("Vous avez choisit de vous déconnecter\n"); 
+				sendRequete(sd, DISCONNECT, username);
+			break; 
+			case 1:
+				printf("Vous avez choisit de lancer une nouvelle partie\n"); 
+				sendRequete(sd, NOUV_PART, username);
+			break; 
+			default:  
+			break ; 
+		}
+		
+		receiveReponse(sd);
+	} while(choix != 0); 
 }
 
 
