@@ -9,6 +9,9 @@
 
 #define MAX_PSEUDO_LENGTH 50
 
+/////////////////////////////////////////////////////////////////////////////// FONCTIONS ///////////////////////////////////////////////////////////////////////////////
+
+// Fonction pour supprimer les accents et convertir en minuscules
 void removeAccentsAndUppercase(char *str)
 {
     int i;
@@ -20,6 +23,7 @@ void removeAccentsAndUppercase(char *str)
     }
 }
 
+// Fonction pour rechercher un pseudo dans la liste
 int recherchePseudo(json_t *pseudosArray, const char *pseudo)
 {
     size_t index;
@@ -40,62 +44,11 @@ int recherchePseudo(json_t *pseudosArray, const char *pseudo)
     return 0;
 }
 
+// Fonction pour ajouter un pseudo à la liste
 void ajouterPseudo(json_t *pseudosArray, const char *pseudo)
 {
     // Ajouter le nouveau pseudo à la liste
     json_array_append_new(pseudosArray, json_string(pseudo));
-}
-
-int connexion(const char *pseudo)
-{
-    // Ouvrir le fichier JSON
-    FILE *file = fopen("jsons/pseudos.json", "r");
-    if (file == NULL)
-    {
-        printf("Erreur lors de l'ouverture du fichier.\n");
-        return 0;
-    }
-
-    // Charger le contenu du fichier JSON
-    json_t *root;
-    json_error_t error;
-    root = json_loadf(file, 0, &error);
-    fclose(file);
-
-    // Vérifier si le pseudo est valide
-    if (strlen(pseudo) < 3)
-    {
-        printf("Le pseudo doit avoir au moins 3 lettres.\n");
-        return 0;
-    }
-
-    // Vérifier si le pseudo existe déjà
-    json_t *pseudosArray = json_object_get(root, "pseudos");
-    if (recherchePseudo(pseudosArray, pseudo))
-    {
-        printf("Le pseudo '%s' existe déjà.\n", pseudo);
-        return 1;
-    }
-
-    // Ajouter le nouveau pseudo
-    ajouterPseudo(pseudosArray, pseudo);
-
-    // Enregistrer les modifications dans le fichier JSON
-    FILE *writeFile = fopen("jsons/pseudos.json", "w");
-    if (writeFile == NULL)
-    {
-        printf("Erreur lors de l'ouverture du fichier en écriture.\n");
-        return 0;
-    }
-
-    json_dumpf(root, writeFile, JSON_INDENT(2));
-    fclose(writeFile);
-
-    // Libérer la mémoire
-    json_decref(root);
-
-    printf("Le pseudo '%s' a été ajouté avec succès.\n", pseudo);
-    return 1;
 }
 
 // Fonction pour trouver un thème aléatoire dans le fichier JSON
@@ -156,6 +109,7 @@ char *findRandomTheme()
     return randomTheme;
 }
 
+// Fonction pour obtenir un pseudo aléatoire pour un joueur connecté
 char *get_random_pseudo(const char *connected_pseudo)
 {
     // Charge la liste de pseudos depuis le fichier JSON
@@ -228,6 +182,129 @@ char *get_random_pseudo(const char *connected_pseudo)
     json_decref(root);
 
     return random_pseudo;
+}
+
+/////////////////////////////////////////////////////////////////////////////// FONCTIONS ///////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
+
+// Fonction pour se connecter avec le nom du pseudo
+int connexion(const char *pseudo)
+{
+    // Ouvrir le fichier JSON
+    FILE *file = fopen("jsons/pseudos.json", "r");
+    if (file == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier.\n");
+        return 0;
+    }
+
+    // Charger le contenu du fichier JSON
+    json_t *root;
+    json_error_t error;
+    root = json_loadf(file, 0, &error);
+    fclose(file);
+
+    // Vérifier si le pseudo est valide
+    if (strlen(pseudo) < 3)
+    {
+        printf("Le pseudo doit avoir au moins 3 lettres.\n");
+        return 0;
+    }
+
+    // Vérifier si le pseudo existe déjà
+    json_t *pseudosArray = json_object_get(root, "pseudos");
+    if (recherchePseudo(pseudosArray, pseudo))
+    {
+        printf("Le pseudo '%s' existe déjà.\n", pseudo);
+        return 1;
+    }
+
+    // Ajouter le nouveau pseudo
+    ajouterPseudo(pseudosArray, pseudo);
+
+    // Enregistrer les modifications dans le fichier JSON
+    FILE *writeFile = fopen("jsons/pseudos.json", "w");
+    if (writeFile == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier en écriture.\n");
+        return 0;
+    }
+
+    json_dumpf(root, writeFile, JSON_INDENT(2));
+    fclose(writeFile);
+
+    // Libérer la mémoire
+    json_decref(root);
+
+    printf("Le pseudo '%s' a été ajouté avec succès.\n", pseudo);
+    return 1;
+}
+
+// Fonction pour afficher tous les pseudos
+void fetchAllPlayers() {
+    // Charger le fichier JSON
+    FILE *file = fopen("jsons/pseudos.json", "r");
+    if (!file) {
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
+        return;
+    }
+
+    // Obtenir la taille du fichier
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    rewind(file);
+
+    // Allouer de la mémoire pour stocker le contenu du fichier
+    char *buffer = (char *)malloc(size + 1);
+    if (!buffer) {
+        fprintf(stderr, "Erreur d'allocation de mémoire.\n");
+        fclose(file);
+        return;
+    }
+
+    // Lire le contenu du fichier dans le buffer
+    fread(buffer, 1, size, file);
+    buffer[size] = '\0'; // Ajouter la terminaison de la chaîne
+
+    // Fermer le fichier
+    fclose(file);
+
+    // Charger le JSON à partir du buffer
+    json_t *root;
+    json_error_t error;
+    root = json_loads(buffer, 0, &error);
+
+    // Libérer la mémoire utilisée par le buffer
+    free(buffer);
+
+    // Vérifier les erreurs lors du chargement du JSON
+    if (!root) {
+        fprintf(stderr, "Erreur lors du chargement du JSON : %s\n", error.text);
+        return;
+    }
+
+    // Accéder au tableau de pseudos
+    json_t *pseudos = json_object_get(root, "pseudos");
+    if (!json_is_array(pseudos)) {
+        fprintf(stderr, "Le champ 'pseudos' n'est pas un tableau.\n");
+        json_decref(root);
+        return;
+    }
+
+    // Parcourir le tableau de pseudos et afficher chaque pseudo
+    size_t index;
+    json_t *value;
+    json_array_foreach(pseudos, index, value) {
+        if (json_is_string(value)) {
+            const char *pseudo = json_string_value(value);
+            printf("Pseudo %lu: %s\n", index + 1, pseudo);
+        }
+    }
+
+    // Libérer la mémoire utilisée par le JSON
+    json_decref(root);
 }
 
 // Fonction pour créer une nouvelle partie et enregistrer les modifications dans le fichier JSON
@@ -362,6 +439,12 @@ int chercherMotDansJSON(const char *theme, const char *mot)
     json_decref(root);
 }
 
+
+/////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
+
 int main()
 {
     // // Exemple d'utilisation
@@ -388,8 +471,12 @@ int main()
     // // Exemple d'utilisation de la fonction creategame
     // creategame("lucie","antoine");
 
-    int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
-    printf("Points : %d\n", points);
+    // int points = chercherMotDansJSON("PaysCommencantparP", "PEROU");
+    // printf("Points : %d\n", points);
+
+    fetchAllPlayers();
 
     return 0;
 }
+
+///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////

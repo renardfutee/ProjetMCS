@@ -34,3 +34,9 @@ char* findRandomTheme();
  * @param recherchePseudo 
  */
 void creategame(const char* connected_pseudo, const char* recherchePseudo);
+
+/**
+ * @brief 
+ * 
+ */
+void fetchAllPlayers(); 
