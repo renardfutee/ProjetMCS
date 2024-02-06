@@ -541,17 +541,20 @@ int creategame(const char *connected_pseudo, const char *recherchePseudo)
     // Enregistrement des modifications dans le fichier
     json_dump_file(root, "jsons/matches.json", JSON_INDENT(4));
 
+    // Récupération de l'ID du match créé
+    int id_match = json_array_size(matches_array);
+
     // Libération de la mémoire allouée
     json_decref(root);
 
-        // Libérer la mémoire allouée pour les thèmes
+    // Libérer la mémoire allouée pour les thèmes
     for (int i = 0; i < 5; ++i)
     {
         free(themes[i]);
     }
     free(themes);
 
-    return json_array_size(matches_array) + 1;
+    return id_match; // Retourne l'ID du match créé
 }
 
 // Fonction pour vérifier les réponses des utilisateurs renvoie le nombre de points gagné (0,1,2,3) récupérer dans le fichier JSON
