@@ -4,6 +4,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+
 #include "reqRep.h"
 #include "data.h"
 
@@ -17,7 +18,7 @@ int main(int argc, char *argv[]){
 		
 	if(argc < 2) {
         	printf("Veuillez vous identifier : "); 
-        	fgets(username, MAX_BUFF, stdin);
+        	scanf("%s", username);
 	}
 	else
         sscanf(argv[1], "%s", username);
@@ -30,12 +31,13 @@ int main(int argc, char *argv[]){
 }
 
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
-	int choix; 
-	char reponse[MAX_BUFF]; 
+	int choix, result; 
+	char reponse;    
+	char adv[MAX_BUFF];  
 	reqSimple_t requete; 
 
 	// L'utilisateur commence par se connecter ! 
-	sendRequete(sd, CONNECT, username);  
+	sendRequete(sd, CONNECT, username, NULL, NULL);  
 	receiveReponse(sd);
 	
 	do{
@@ -47,18 +49,42 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 		switch(choix){
 			case 0: 
 				printf("Vous avez choisit de vous déconnecter\n"); 
-				sendRequete(sd, DISCONNECT, username);
+				sendRequete(sd, DISCONNECT, username, NULL, NULL);
+				receiveReponse(sd);
 			break; 
 			case 1:
-				printf("Vous avez choisit de lancer une nouvelle partie\n"); 
-				sendRequete(sd, NOUV_PART, username);
+				printf("Vous avez choisit de lancer une nouvelle partie\n\n Voici les joueurs disponibles : \n -----------------------------------------\n"); 
+				sendRequete(sd, GET_USRS, username, NULL, NULL);
+				receiveReponse(sd);
+				printf("-----------------------------------------\n"); 
+				
+				do {
+					printf("Veuillez entrer le nom du joueur que vous voulez défier: "); 
+					scanf("%s", adv);
+					// printf("Nom du joueur choisit : %s\n", adv);
+					sendRequete(sd, CHECK_PSEUDO, adv, NULL, NULL); 
+					result = receiveReponse(sd).nb; 
+				}while(result == 0); 
+				
+				sendRequete(sd, NOUV_PART, username, adv, NULL);
+				printf("Id partie: "); 
+				result = atoi(receiveReponse(sd).msg); 
+				printf("\n\n-------------------------------------------------\n|\tPARTIE %s contre %s\t\t|\n-------------------------------------------------\n", username, adv); 
+				printf("|\t\t\t\t\t\t|\n|\t\tManche 1\t\t\t|\n|\tVoulez-vous jouer cette manche ?\t|\n|\t\t\t\t\t\t|\n-------------------------------------------------\n[Y|N]--->"); 
+				scanf(" %c", &reponse);
+
+				if (reponse == 'y' || reponse == 'Y') {
+        				sendRequete(sd, LANCER_MANCHE, username, result, 1);
+
+        				do {
+        					result = receiveReponse(sd).nb;
+        				}while(result != 0); 
+
+        			}
+    				
 			break; 
 			default:  
 			break ; 
 		}
-		
-		receiveReponse(sd);
 	} while(choix != 0); 
 }
-
-
