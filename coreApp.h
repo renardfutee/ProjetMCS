@@ -39,4 +39,4 @@ char *creategame(const char* connected_pseudo, const char* recherchePseudo);
  * @brief 
  * 
  */
-char* fetchAllPlayers(); 
+char** fetchAllPlayers(); 

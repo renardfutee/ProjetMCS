@@ -4,6 +4,7 @@
         "unistd.h": "c",
         "inet.h": "c",
         "reqrep.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "coreapp.h": "c"
     }
 }

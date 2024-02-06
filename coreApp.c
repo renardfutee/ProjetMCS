@@ -110,12 +110,13 @@ void ajouterPseudo(const char *pseudo)
     json_array_append_new(pseudosArray, json_string(pseudo));
 
     // Écrire les modifications dans le fichier JSON
-    fseek(file, 0, SEEK_SET); // Se positionner au début du fichier
+    fseek(file, 0, SEEK_SET);               // Se positionner au début du fichier
     json_dumpf(root, file, JSON_INDENT(4)); // Écrire le JSON dans le fichier avec indentation
     fclose(file);
-    
+
     json_decref(root); // Libérer la mémoire utilisée par le JSON
 }
+
 // Fonction pour trouver un thème aléatoire dans le fichier JSON
 char *findRandomTheme()
 {
@@ -172,6 +173,73 @@ char *findRandomTheme()
     free(themes);
 
     return randomTheme;
+}
+
+// Fonction pour trouver 5 thèmes aléatoires différents dans le fichier JSON
+char **findRandomThemes()
+{
+    // Ouvrir le fichier JSON
+    FILE *file = fopen("jsons/reponsestheme.json", "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
+        return NULL;
+    }
+
+    // Charger le contenu du fichier JSON
+    json_t *root;
+    json_error_t error;
+    root = json_loadf(file, 0, &error);
+    fclose(file);
+
+    // Vérifier si le fichier JSON est correctement chargé
+    if (!root)
+    {
+        fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
+        return NULL;
+    }
+
+    // Extraire les thèmes du fichier JSON
+    json_t *themesObj = root;
+    if (!themesObj || !json_is_object(themesObj))
+    {
+        fprintf(stderr, "Le fichier JSON ne contient pas d'objet.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    // Extraire les clés (thèmes) du fichier JSON
+    size_t themesCount = json_object_size(themesObj);
+
+    // Allouer de la mémoire pour stocker les thèmes
+    char **themes = (char **)malloc(5 * sizeof(char *));
+    if (!themes)
+    {
+        fprintf(stderr, "Erreur d'allocation de mémoire.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    size_t index = 0;
+    const char *theme;
+    json_t *themeValue;
+    json_object_foreach(themesObj, theme, themeValue)
+    {
+        if (index >= 5)
+            break;
+
+        // Choisir un thème aléatoire
+        srand(time(NULL) + index); // Seed différent pour chaque thème
+        size_t randomIndex = rand() % themesCount;
+
+        // Ajouter le thème choisi au tableau de thèmes
+        themes[index++] = strdup(theme);
+    }
+
+    // Fermer le fichier JSON
+    json_decref(root);
+
+    return themes;
 }
 
 // Fonction pour obtenir un pseudo aléatoire pour un joueur connecté
@@ -307,7 +375,7 @@ int connexion(const char *pseudo)
 }
 
 // Fonction pour afficher tous les pseudos
-char *fetchAllPlayers(const char *pseudoconnecte)
+char **fetchAllPlayers(const char *pseudoconnecte)
 {
     // Charger le fichier JSON
     FILE *file = fopen("jsons/pseudos.json", "r");
@@ -421,7 +489,6 @@ char *fetchAllPlayers(const char *pseudoconnecte)
 // Fonction pour créer une nouvelle partie et enregistrer les modifications dans le fichier JSON
 char *creategame(const char *connected_pseudo, const char *recherchePseudo)
 {
-
     // Charge le JSON depuis le fichier
     json_t *root;
     json_error_t error;
@@ -430,7 +497,7 @@ char *creategame(const char *connected_pseudo, const char *recherchePseudo)
     if (!root)
     {
         fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
-        return 1;
+        return NULL;
     }
 
     // Récupère la liste de matchs
@@ -438,58 +505,53 @@ char *creategame(const char *connected_pseudo, const char *recherchePseudo)
     if (!json_is_array(matches_array))
     {
         fprintf(stderr, "La propriété 'matches' n'est pas un tableau JSON.\n");
-        return;
+        json_decref(root);
+        return NULL;
     }
 
-    // Obtient un pseudo aléatoire pour l'adversaire
-    char* adversary_pseudo = get_random_pseudo(connected_pseudo);
-    // char *adversary_pseudo = recherchePseudo;
-    if (!adversary_pseudo)
+    // Création des 5 manches
+    json_t *parties_array = json_array();
+    char **themes = findRandomThemes(); // Obtenir 5 thèmes aléatoires différents
+
+    for (int i = 0; i < 5; ++i)
     {
-        fprintf(stderr, "Erreur lors de la recherche d'un adversaire.\n");
-        return;
+        // Création de la nouvelle partie
+        json_t *new_partie = json_object();
+        json_object_set_new(new_partie, "id_match", json_integer(json_array_size(matches_array) + 1));
+        json_object_set_new(new_partie, "id_manche", json_integer(i + 1));
+        json_object_set_new(new_partie, "theme", json_string(themes[i])); // Utilisation du thème
+        json_object_set_new(new_partie, "score1", json_integer(0));
+        json_object_set_new(new_partie, "score2", json_integer(0));
+
+        // Ajout de la nouvelle partie au tableau des parties
+        json_array_append_new(parties_array, new_partie);
     }
 
-    // Obtient un thème aléatoire
-    const char *theme = findRandomTheme();
-
-    // Crée un nouvel objet partie
-    json_t *new_partie = json_object();
-    json_object_set_new(new_partie, "id_match", json_integer(json_array_size(matches_array) + 1));
-    json_object_set_new(new_partie, "id_manche", json_integer(1));
-    json_object_set_new(new_partie, "theme", json_string(theme));
-    json_object_set_new(new_partie, "score", json_integer(0));
-
-    // Crée un nouvel objet joueur (connecté)
-    json_t *connected_player = json_object();
-    json_object_set_new(connected_player, "adversaire", json_string(adversary_pseudo));
-    json_t *parties_array_connected = json_array();
-    json_array_append_new(parties_array_connected, new_partie);
-    json_object_set_new(connected_player, "parties", parties_array_connected);
-
-    // Crée un nouvel objet joueur (adversaire)
-    json_t *adversary_player = json_object();
-    json_object_set_new(adversary_player, "adversaire", json_string(connected_pseudo));
-    json_t *parties_array_adversary = json_array();
-    json_array_append_new(parties_array_adversary, new_partie);
-    json_object_set_new(adversary_player, "parties", parties_array_adversary);
-
-    // Crée un nouvel objet match
+    // Création du nouveau match
     json_t *new_match = json_object();
-    json_object_set_new(new_match, "joueur1", connected_player);
-    json_object_set_new(new_match, "joueur2", adversary_player);
+    json_object_set_new(new_match, "joueur1", json_string(connected_pseudo));
+    json_object_set_new(new_match, "joueur2", json_string(recherchePseudo));
+    json_object_set_new(new_match, "score1", json_integer(0));
+    json_object_set_new(new_match, "score2", json_integer(0));
+    json_object_set_new(new_match, "parties", parties_array);
 
-    // Ajoute le nouveau match à la liste des matchs
+    // Ajout du nouveau match à la liste des matchs
     json_array_append_new(matches_array, new_match);
 
-    // Enregistre les modifications dans le fichier
-    json_dump_file(root, "jsons/matches.json", 0);
+    // Enregistrement des modifications dans le fichier
+    json_dump_file(root, "jsons/matches.json", JSON_INDENT(4));
 
-    // Libère la mémoire allouée
-    free(adversary_pseudo);
-    // Libère la mémoire allouée
+    // Libération de la mémoire allouée
     json_decref(root);
-    return theme;
+
+    // Libérer la mémoire allouée pour les thèmes
+    for (int i = 0; i < 5; ++i)
+    {
+        free(themes[i]);
+    }
+    free(themes);
+
+    return "Parties créées avec succès.";
 }
 
 // Fonction pour vérifier les réponses des utilisateurs renvoie le nombre de points gagné (0,1,2,3) récupérer dans le fichier JSON
@@ -500,7 +562,7 @@ int chercherMotDansJSON(const char *theme, const char *mot)
     if (file == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier.\n");
-        return;
+        return 0;
     }
 
     // Charger le contenu du fichier JSON
@@ -551,6 +613,71 @@ int chercherMotDansJSON(const char *theme, const char *mot)
     json_decref(root);
 }
 
+// Fonction pour récupérer le thème correspondant à l'identifiant du match et de la manche
+char *RecupTheme(int id_match, int id_manche)
+{
+    // Charger le JSON depuis le fichier
+    json_t *root;
+    json_error_t error;
+    root = json_load_file("jsons/matches.json", 0, &error);
+    if (!root)
+    {
+        fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
+        return NULL;
+    }
+
+    // Récupérer la liste de matchs
+    json_t *matches_array = json_object_get(root, "matches");
+    if (!json_is_array(matches_array))
+    {
+        fprintf(stderr, "La propriété 'matches' n'est pas un tableau JSON.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    // Parcourir les matchs
+    size_t index;
+    json_t *match;
+    json_array_foreach(matches_array, index, match)
+    {
+        // Récupérer les parties du match
+        json_t *parties_array = json_object_get(match, "parties");
+        if (!json_is_array(parties_array))
+        {
+            fprintf(stderr, "La propriété 'parties' n'est pas un tableau JSON.\n");
+            continue;
+        }
+
+        // Parcourir les parties du match
+        size_t i;
+        json_t *partie;
+        json_array_foreach(parties_array, i, partie)
+        {
+            // Vérifier l'identifiant du match et de la manche
+            json_t *id_match_json = json_object_get(partie, "id_match");
+            json_t *id_manche_json = json_object_get(partie, "id_manche");
+            if (json_integer_value(id_match_json) == id_match && json_integer_value(id_manche_json) == id_manche)
+            {
+                // Récupérer le thème de la manche
+                json_t *theme_json = json_object_get(partie, "theme");
+                const char *theme = json_string_value(theme_json);
+
+                printf("Thème présent dans la fonction recupTheme : %s\n", theme);
+                // Libérer la mémoire utilisée
+                json_decref(root);
+                // Retourner le thème
+                return strdup(theme);
+            }
+        }
+    }
+
+    // Libérer la mémoire utilisée
+    json_decref(root);
+
+    fprintf(stderr, "Aucun thème trouvé pour l'identifiant de match %d et l'identifiant de manche %d.\n", id_match, id_manche);
+    return NULL;
+}
+
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
@@ -589,27 +716,70 @@ int chercherMotDansJSON(const char *theme, const char *mot)
 //     return 0;
 // }
 
-int main() {
+int main()
+{
 
+    // connexion("lucie");
 
-    connexion("lucie");
+    // char **pseudos = fetchAllPlayers("Achrafe\n");
+    // if (pseudos)
+    // {
+    //     printf("Liste des pseudos :\n");
 
-    char **pseudos = fetchAllPlayers("Achrafe\n");
-    if (pseudos) {
-        printf("Liste des pseudos :\n");
+    //     // Afficher les pseudos jusqu'à ce que NULL soit rencontré
+    //     for (size_t i = 0; pseudos[i] != NULL; i++)
+    //     {
+    //         printf("%s", pseudos[i]);
+    //     }
 
-        // Afficher les pseudos jusqu'à ce que NULL soit rencontré
-        for (size_t i = 0; pseudos[i] != NULL; i++) {
-            printf("%s", pseudos[i]);
-        }
+    //     // Libérer la mémoire allouée pour les pseudos
+    //     for (size_t i = 0; pseudos[i] != NULL; i++)
+    //     {
+    //         free(pseudos[i]);
+    //     }
+    //     free(pseudos); // Libérer la mémoire du tableau principal
+    // }
+    // else
+    // {
+    //     printf("Erreur lors de la récupération des pseudos.\n");
+    // }
 
-        // Libérer la mémoire allouée pour les pseudos
-        for (size_t i = 0; pseudos[i] != NULL; i++) {
-            free(pseudos[i]);
-        }
-        free(pseudos); // Libérer la mémoire du tableau principal
-    } else {
-        printf("Erreur lors de la récupération des pseudos.\n");
+    // int id_match = 1;
+    // int id_manche = 1;
+
+    // char *theme = RecupTheme(id_match, id_manche);
+    // printf("%s\n", RecupTheme(id_match, id_manche));
+    // if (theme)
+    // {
+    //     printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+    //     free(theme);
+    // }
+    // else
+    // {
+    //     printf("Aucun thème trouvé pour le match %d et la manche %d.\n", id_match, id_manche);
+    // }
+
+    // return 0;
+
+    // creategame("Agathe\n",
+    //            "Achrafe\n");
+
+    // return 0;
+
+    // Appel de la fonction RecupTheme avec des valeurs d'exemple pour id_match et id_manche
+    int id_match = 1;
+    int id_manche = 1;
+    char *theme = RecupTheme(id_match, id_manche);
+
+    // Vérification si la récupération du thème a réussi
+    if (theme != NULL)
+    {
+        printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+        free(theme); // N'oubliez pas de libérer la mémoire allouée par RecupTheme
+    }
+    else
+    {
+        printf("Erreur lors de la récupération du thème.\n");
     }
 
     return 0;
