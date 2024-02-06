@@ -497,7 +497,7 @@ int creategame(const char *connected_pseudo, const char *recherchePseudo)
     if (!root)
     {
         fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
-        return NULL;
+        return 0;
     }
 
     // Récupère la liste de matchs
@@ -506,7 +506,7 @@ int creategame(const char *connected_pseudo, const char *recherchePseudo)
     {
         fprintf(stderr, "La propriété 'matches' n'est pas un tableau JSON.\n");
         json_decref(root);
-        return NULL;
+        return 0;
     }
 
     // Création des 5 manches
@@ -550,8 +550,8 @@ int creategame(const char *connected_pseudo, const char *recherchePseudo)
         free(themes[i]);
     }
     free(themes);
-    
-    return json_integer(json_array_size(matches_array) + 1);
+
+    return json_array_size(matches_array) + 1;
 }
 
 // Fonction pour vérifier les réponses des utilisateurs renvoie le nombre de points gagné (0,1,2,3) récupérer dans le fichier JSON
@@ -761,26 +761,26 @@ int main()
 
     // return 0;
 
-    // creategame("Agathe\n",
-    //            "Achrafe\n");
+    printf("%d",creategame("Agathe\n",
+               "Achrafe\n"));
 
     // return 0;
 
     // Appel de la fonction RecupTheme avec des valeurs d'exemple pour id_match et id_manche
-    int id_match = 1;
-    int id_manche = 1;
-    char *theme = RecupTheme(id_match, id_manche);
+    // int id_match = 1;
+    // int id_manche = 1;
+    // char *theme = RecupTheme(id_match, id_manche);
 
-    // Vérification si la récupération du thème a réussi
-    if (theme != NULL)
-    {
-        printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
-        free(theme); // N'oubliez pas de libérer la mémoire allouée par RecupTheme
-    }
-    else
-    {
-        printf("Erreur lors de la récupération du thème.\n");
-    }
+    // // Vérification si la récupération du thème a réussi
+    // if (theme != NULL)
+    // {
+    //     printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+    //     free(theme); // N'oubliez pas de libérer la mémoire allouée par RecupTheme
+    // }
+    // else
+    // {
+    //     printf("Erreur lors de la récupération du thème.\n");
+    // }
 
     return 0;
 }
