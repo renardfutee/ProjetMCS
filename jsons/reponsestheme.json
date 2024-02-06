@@ -198,18 +198,13 @@
   "big six wheel": 1,
   "three card poker": 2,
   "video poker": 3,
-  "slot machine": 1,
   "bingo": 2,
-  "keno": 1,
-  "craps": 3,
   "roulette russe": 2,
   "boule 2000": 1,
   "stud poker": 2,
-  "punto banco": 1,
   "roulette italienne": 2,
   "keno gagnant a vie": 1,
   "slot machine": 2,
-  "boule": 1,
   "blackjack americain": 3
 },
 "Pays d'Afrique": {
@@ -359,7 +354,6 @@
   "korfball": 1,
   "footgolf": 3,
   "volleyball de plage": 2,
-  "padel": 1,
   "squash": 1,
   "floorball": 1
 },
