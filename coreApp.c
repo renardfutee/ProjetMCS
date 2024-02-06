@@ -176,10 +176,12 @@ char *findRandomTheme()
 }
 
 // Fonction pour trouver 5 thèmes aléatoires différents dans le fichier JSON
-char **findRandomThemes() {
+char **findRandomThemes()
+{
     // Ouvrir le fichier JSON contenant les thèmes
     FILE *file = fopen("jsons/reponsestheme.json", "r");
-    if (!file) {
+    if (!file)
+    {
         fprintf(stderr, "Erreur lors de l'ouverture du fichier de thèmes.\n");
         return NULL;
     }
@@ -190,14 +192,16 @@ char **findRandomThemes() {
     root = json_loadf(file, 0, &error);
     fclose(file);
 
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur lors du chargement du fichier JSON : %s\n", error.text);
         return NULL;
     }
 
     // Allouer de la mémoire pour stocker les thèmes
     char **themes = malloc(json_object_size(root) * sizeof(char *));
-    if (!themes) {
+    if (!themes)
+    {
         fprintf(stderr, "Erreur d'allocation de mémoire pour les thèmes.\n");
         json_decref(root);
         return NULL;
@@ -207,13 +211,15 @@ char **findRandomThemes() {
     size_t index = 0;
     const char *theme;
     json_t *value;
-    json_object_foreach(root, theme, value) {
+    json_object_foreach(root, theme, value)
+    {
         themes[index++] = strdup(theme);
     }
 
     // Mélanger les thèmes
     srand(time(NULL)); // Initialiser la seed pour rand()
-    for (size_t i = json_object_size(root) - 1; i > 0; i--) {
+    for (size_t i = json_object_size(root) - 1; i > 0; i--)
+    {
         size_t j = rand() % (i + 1);
         char *temp = themes[i];
         themes[i] = themes[j];
@@ -647,13 +653,20 @@ char *RecupTheme(int id_match, int id_manche)
             {
                 // Récupérer le thème de la manche
                 json_t *theme_json = json_object_get(partie, "theme");
-                const char *theme = json_string_value(theme_json);
-
-                printf("Thème présent dans la fonction recupTheme : %s\n", theme);
-                // Libérer la mémoire utilisée
-                json_decref(root);
-                // Retourner le thème
-                return strdup(theme);
+                // Vérifier si le thème existe et est une chaîne de caractères
+                if (theme_json != NULL && json_is_string(theme_json))
+                {
+                    const char *theme = json_string_value(theme_json);
+                    //printf("Thème présent dans la fonction recupTheme : %s\n", theme);
+                    // Retourner le thème
+                    return strdup(theme);
+                }
+                else
+                {
+                    // Gérer le cas où le thème est absent ou n'est pas une chaîne de caractères
+                    fprintf(stderr, "Erreur : Thème manquant ou invalide.\n");
+                    return NULL;
+                }
             }
         }
     }
@@ -748,26 +761,26 @@ int main()
 
     // return 0;
 
-    printf("%d",creategame("Agathe\n",
-               "Achrafe\n"));
+    // printf("%d",creategame("Agathe\n",
+    //            "Achrafe\n"));
 
     // return 0;
 
     // Appel de la fonction RecupTheme avec des valeurs d'exemple pour id_match et id_manche
-    // int id_match = 1;
-    // int id_manche = 1;
-    // char *theme = RecupTheme(id_match, id_manche);
+    int id_match = 1;
+    int id_manche = 2;
+    char *theme = RecupTheme(id_match, id_manche);
 
-    // // Vérification si la récupération du thème a réussi
-    // if (theme != NULL)
-    // {
-    //     printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
-    //     free(theme); // N'oubliez pas de libérer la mémoire allouée par RecupTheme
-    // }
-    // else
-    // {
-    //     printf("Erreur lors de la récupération du thème.\n");
-    // }
+    // Vérification si la récupération du thème a réussi
+    if (theme != NULL)
+    {
+        printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+        free(theme);
+    }
+    else
+    {
+        printf("Erreur lors de la récupération du thème.\n");
+    }
 
     return 0;
 }
