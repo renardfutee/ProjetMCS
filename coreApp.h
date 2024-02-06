@@ -33,7 +33,7 @@ char* findRandomTheme();
  * @param connected_pseudo 
  * @param recherchePseudo 
  */
-char *creategame(const char* connected_pseudo, const char* recherchePseudo);
+int creategame(const char* connected_pseudo, const char* recherchePseudo);
 
 /**
  * @brief 

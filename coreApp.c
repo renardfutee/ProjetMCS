@@ -487,7 +487,7 @@ char **fetchAllPlayers(const char *pseudoconnecte)
 }
 
 // Fonction pour créer une nouvelle partie et enregistrer les modifications dans le fichier JSON
-char *creategame(const char *connected_pseudo, const char *recherchePseudo)
+int creategame(const char *connected_pseudo, const char *recherchePseudo)
 {
     // Charge le JSON depuis le fichier
     json_t *root;
@@ -544,14 +544,14 @@ char *creategame(const char *connected_pseudo, const char *recherchePseudo)
     // Libération de la mémoire allouée
     json_decref(root);
 
-    // Libérer la mémoire allouée pour les thèmes
+        // Libérer la mémoire allouée pour les thèmes
     for (int i = 0; i < 5; ++i)
     {
         free(themes[i]);
     }
     free(themes);
-
-    return "Parties créées avec succès.";
+    
+    return json_integer(json_array_size(matches_array) + 1);
 }
 
 // Fonction pour vérifier les réponses des utilisateurs renvoie le nombre de points gagné (0,1,2,3) récupérer dans le fichier JSON
