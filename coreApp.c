@@ -176,67 +176,51 @@ char *findRandomTheme()
 }
 
 // Fonction pour trouver 5 thèmes aléatoires différents dans le fichier JSON
-char **findRandomThemes()
-{
-    // Ouvrir le fichier JSON
+char **findRandomThemes() {
+    // Ouvrir le fichier JSON contenant les thèmes
     FILE *file = fopen("jsons/reponsestheme.json", "r");
-    if (file == NULL)
-    {
-        fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
+    if (!file) {
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier de thèmes.\n");
         return NULL;
     }
 
-    // Charger le contenu du fichier JSON
+    // Charger le fichier JSON
     json_t *root;
     json_error_t error;
     root = json_loadf(file, 0, &error);
     fclose(file);
 
-    // Vérifier si le fichier JSON est correctement chargé
-    if (!root)
-    {
-        fprintf(stderr, "Erreur lors de la lecture du fichier JSON : %s\n", error.text);
+    if (!root) {
+        fprintf(stderr, "Erreur lors du chargement du fichier JSON : %s\n", error.text);
         return NULL;
     }
-
-    // Extraire les thèmes du fichier JSON
-    json_t *themesObj = root;
-    if (!themesObj || !json_is_object(themesObj))
-    {
-        fprintf(stderr, "Le fichier JSON ne contient pas d'objet.\n");
-        json_decref(root);
-        return NULL;
-    }
-
-    // Extraire les clés (thèmes) du fichier JSON
-    size_t themesCount = json_object_size(themesObj);
 
     // Allouer de la mémoire pour stocker les thèmes
-    char **themes = (char **)malloc(5 * sizeof(char *));
-    if (!themes)
-    {
-        fprintf(stderr, "Erreur d'allocation de mémoire.\n");
+    char **themes = malloc(json_object_size(root) * sizeof(char *));
+    if (!themes) {
+        fprintf(stderr, "Erreur d'allocation de mémoire pour les thèmes.\n");
         json_decref(root);
         return NULL;
     }
 
+    // Récupérer les clés (thèmes) du fichier JSON
     size_t index = 0;
     const char *theme;
-    json_t *themeValue;
-    json_object_foreach(themesObj, theme, themeValue)
-    {
-        if (index >= 5)
-            break;
-
-        // Choisir un thème aléatoire
-        srand(time(NULL) + index); // Seed différent pour chaque thème
-        size_t randomIndex = rand() % themesCount;
-
-        // Ajouter le thème choisi au tableau de thèmes
+    json_t *value;
+    json_object_foreach(root, theme, value) {
         themes[index++] = strdup(theme);
     }
 
-    // Fermer le fichier JSON
+    // Mélanger les thèmes
+    srand(time(NULL)); // Initialiser la seed pour rand()
+    for (size_t i = json_object_size(root) - 1; i > 0; i--) {
+        size_t j = rand() % (i + 1);
+        char *temp = themes[i];
+        themes[i] = themes[j];
+        themes[j] = temp;
+    }
+
+    // Libérer la mémoire utilisée par le JSON
     json_decref(root);
 
     return themes;

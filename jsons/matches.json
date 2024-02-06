@@ -9,35 +9,35 @@
                 {
                     "id_match": 1,
                     "id_manche": 1,
-                    "theme": "PaysCommencantparP",
+                    "theme": "Verbes pour les Sons d'Animaux",
                     "score1": 0,
                     "score2": 0
                 },
                 {
                     "id_match": 1,
                     "id_manche": 2,
-                    "theme": "FruitsJaunes",
+                    "theme": "RacesChiens",
                     "score1": 0,
                     "score2": 0
                 },
                 {
                     "id_match": 1,
                     "id_manche": 3,
-                    "theme": "TransportEnCommun",
+                    "theme": "Marques de Chaussures",
                     "score1": 0,
                     "score2": 0
                 },
                 {
                     "id_match": 1,
                     "id_manche": 4,
-                    "theme": "ChosesIndispensablesEnVacances",
+                    "theme": "Joueurs de l'EDF",
                     "score1": 0,
                     "score2": 0
                 },
                 {
                     "id_match": 1,
                     "id_manche": 5,
-                    "theme": "JoueursEDF",
+                    "theme": "Langues",
                     "score1": 0,
                     "score2": 0
                 }
