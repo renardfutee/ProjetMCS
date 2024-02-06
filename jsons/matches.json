@@ -1,1 +1,9 @@
+<<<<<<< HEAD
 {"matches": [{"joueur1": {"adversaire": "Mathis", "parties": [{"id_match": 1, "id_manche": 1, "theme": "FruitsJaunes", "score": 0}]}, "joueur2": {"adversaire": "Adele", "parties": [{"id_match": 1, "id_manche": 1, "theme": "FruitsJaunes", "score": 0}]}}, {"joueur1": {"adversaire": "M", "parties": [{"id_match": 2, "id_manche": 1, "theme": "JoueursEDF", "score": 0}]}, "joueur2": {"adversaire": "Adele", "parties": [{"id_match": 2, "id_manche": 1, "theme": "JoueursEDF", "score": 0}]}}]}
+=======
+{
+    "matches": [
+       
+    ]
+}
+>>>>>>> e92f122ba48e37874c078c863c01a1f8548304f2

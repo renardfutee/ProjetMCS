@@ -1,5 +1,6 @@
 {
   "pseudos": [
+<<<<<<< HEAD
     "bastian",
     "alexis",
     "lucie",
@@ -11,5 +12,11 @@
     "Agathe",
     "Adele",
     "Achrafe"
+=======
+    "Jonathan\n",
+    "Mathis\n",
+    "Agathe\n",
+    "Achrafe\n"
+>>>>>>> e92f122ba48e37874c078c863c01a1f8548304f2
   ]
 }
