@@ -197,7 +197,7 @@ int connexion(const char *pseudo)
     if (file == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier.\n");
-        return 0;
+        return -1;
     }
 
     // Charger le contenu du fichier JSON
@@ -210,7 +210,7 @@ int connexion(const char *pseudo)
     if (strlen(pseudo) < 3)
     {
         printf("Le pseudo doit avoir au moins 3 lettres.\n");
-        return 0;
+        return -1;
     }
 
     // Vérifier si le pseudo existe déjà
@@ -229,7 +229,7 @@ int connexion(const char *pseudo)
     if (writeFile == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier en écriture.\n");
-        return 0;
+        return -1;
     }
 
     json_dumpf(root, writeFile, JSON_INDENT(2));
@@ -239,7 +239,7 @@ int connexion(const char *pseudo)
     json_decref(root);
 
     printf("Le pseudo '%s' a été ajouté avec succès.\n", pseudo);
-    return 1;
+    return 0;
 }
 
 // Fonction pour afficher tous les pseudos
@@ -445,7 +445,7 @@ int chercherMotDansJSON(const char *theme, const char *mot)
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
 
-int main()
+/*int main()
 {
     // // Exemple d'utilisation
     // connexion("lucie");  // Pseudo existant
@@ -477,6 +477,6 @@ int main()
     fetchAllPlayers();
 
     return 0;
-}
+}*/
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////

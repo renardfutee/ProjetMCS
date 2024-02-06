@@ -8,6 +8,7 @@
 #include "data.h"
 
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username);
+char *saisie(); 
 
 int main(int argc, char *argv[]){
 	char username[MAX_BUFF];
@@ -17,7 +18,7 @@ int main(int argc, char *argv[]){
 		
 	if(argc < 2) {
         	printf("Veuillez vous identifier : "); 
-        	fgets(username, MAX_BUFF, stdin);
+        	scanf("%s", username);
 	}
 	else
         sscanf(argv[1], "%s", username);
@@ -30,12 +31,12 @@ int main(int argc, char *argv[]){
 }
 
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
-	int choix; 
-	char reponse[MAX_BUFF]; 
+	int choix, result; 
+	char buff[MAX_BUFF]; 
 	reqSimple_t requete; 
 
 	// L'utilisateur commence par se connecter ! 
-	sendRequete(sd, CONNECT, username);  
+	sendRequete(sd, CONNECT, username, NULL);  
 	receiveReponse(sd);
 	
 	do{
@@ -47,18 +48,31 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 		switch(choix){
 			case 0: 
 				printf("Vous avez choisit de vous déconnecter\n"); 
-				sendRequete(sd, DISCONNECT, username);
+				sendRequete(sd, DISCONNECT, username, NULL);
+				receiveReponse(sd);
 			break; 
 			case 1:
-				printf("Vous avez choisit de lancer une nouvelle partie\n"); 
-				sendRequete(sd, NOUV_PART, username);
+				printf("Vous avez choisit de lancer une nouvelle partie\n\n Voici les joueurs disponibles : \n -----------------------------------------\n"); 
+				sendRequete(sd, GET_USRS, username, NULL);
+				receiveReponse(sd);
+				printf("-----------------------------------------\n"); 
+				do {
+					printf("Veuillez entrer le nom du joueur que vous voulez défier: "); 
+					scanf("%s", buff);
+					printf("Nom du joueur choisit : %s\n", buff);
+					sendRequete(sd, CHECK_PSEUDO, buff, NULL); 
+					result = receiveReponse(sd).nb; 
+					
+					if(result == 0)
+						printf("Recommencer la saisie !\n"); 
+				}while(result == 0); 
+				
+				sendRequete(sd, NOUV_PART, username, buff);
+				
+				printf("\n\n-------------------------------------------------\n|\t\t\t\t\t\t|\n|\t\t%s\t\t\t\t|\n|\t\t\t\t\t\t|\n-------------------------------------------------\n\n", receiveReponse(sd).msg); 
 			break; 
 			default:  
 			break ; 
 		}
-		
-		receiveReponse(sd);
 	} while(choix != 0); 
 }
-
-
