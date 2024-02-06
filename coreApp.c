@@ -13,7 +13,6 @@
 void removeAccentsAndUppercase(char *str)
 {
     int i;
-    int i;
 
     // Convertir en minuscules
     for (i = 0; str[i] != '\0'; i++)
