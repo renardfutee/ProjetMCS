@@ -657,8 +657,8 @@ char *RecupTheme(int id_match, int id_manche)
                 if (theme_json != NULL && json_is_string(theme_json))
                 {
                     const char *theme = json_string_value(theme_json);
-                    //printf("Thème présent dans la fonction recupTheme : %s\n", theme);
-                    // Retourner le thème
+                    // printf("Thème présent dans la fonction recupTheme : %s\n", theme);
+                    //  Retourner le thème
                     return strdup(theme);
                 }
                 else
@@ -676,6 +676,104 @@ char *RecupTheme(int id_match, int id_manche)
 
     fprintf(stderr, "Aucun thème trouvé pour l'identifiant de match %d et l'identifiant de manche %d.\n", id_match, id_manche);
     return NULL;
+}
+
+// Fonction pour mettre à jour le score
+char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot) {
+    // Récupérer le thème
+    const char *theme = RecupTheme(id_match, id_manche);
+    if (theme == NULL) {
+        fprintf(stderr, "Erreur : Impossible de récupérer le thème.\n");
+        return "-1";
+    }
+
+    // Récupérer le score pour l'instant
+    int score = chercherMotDansJSON(theme, mot);
+    if (score == -1) {
+        fprintf(stderr, "Erreur : Impossible de récupérer le score.\n");
+        return "-1";
+    }
+
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r+");
+    if (fichier == NULL) {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return "-1";
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    if (!root) {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        fclose(fichier);
+        return "-1";
+    }
+
+    // Recherche du match correspondant
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches)) {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        fclose(fichier);
+        json_decref(root);
+        return "-1";
+    }
+
+    int i;
+    for (i = 0; i < json_array_size(matches); i++) {
+        json_t *match = json_array_get(matches, i);
+        // Recherche de la manche correspondante
+        json_t *parties = json_object_get(match, "parties");
+        if (!json_is_array(parties)) {
+            fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+            fclose(fichier);
+            json_decref(root);
+            return "-1";
+        }
+
+        int j;
+        for (j = 0; j < json_array_size(parties); j++) {
+            json_t *partie = json_array_get(parties, j);
+            json_t *id_match_json = json_object_get(partie, "id_match");
+            json_t *id_manche_json = json_object_get(partie, "id_manche");
+            if (json_integer_value(id_manche_json) == id_manche && json_integer_value(id_match_json) == id_match) {
+                // Mettre à jour le score pour le pseudo donné
+                json_t *score1 = json_object_get(partie, "score1");
+                json_t *score2 = json_object_get(partie, "score2");
+
+                // Mettre à jour le score approprié selon le pseudo
+                if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur1"))) == 0) {
+                    json_integer_set(score1, json_integer_value(score1) + score); // Ajout du score
+                } else if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur2"))) == 0) {
+                    json_integer_set(score2, json_integer_value(score2) + score); // Ajout du score
+                } else {
+                    fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
+                    fclose(fichier);
+                    json_decref(root);
+                    return "-1";
+                }
+
+                // Enregistrement des modifications dans le fichier JSON
+                fseek(fichier, 0, SEEK_SET);
+                json_dumpf(root, fichier, JSON_INDENT(4));
+                fclose(fichier);
+                json_decref(root);
+
+                // Convertir le score mis à jour en une chaîne de caractères
+                char *score_string = malloc(sizeof(char) * 10); // Assez grand pour contenir des nombres jusqu'à 9 chiffres
+                if (score_string == NULL) {
+                    fprintf(stderr, "Erreur : Impossible d'allouer de la mémoire.\n");
+                    return "-1";
+                }
+                sprintf(score_string, "%d", score);
+                return score_string;
+            }
+        }
+    }
+
+    fprintf(stderr, "Erreur : ID de match non trouvé dans le fichier JSON.\n");
+    fclose(fichier);
+    json_decref(root);
+    return "-1";
 }
 
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
@@ -716,72 +814,78 @@ char *RecupTheme(int id_match, int id_manche)
 //     return 0;
 // }
 
+// int main()
+// {
+
+//     // connexion("lucie");
+
+//     // char **pseudos = fetchAllPlayers("Achrafe\n");
+//     // if (pseudos)
+//     // {
+//     //     printf("Liste des pseudos :\n");
+
+//     //     // Afficher les pseudos jusqu'à ce que NULL soit rencontré
+//     //     for (size_t i = 0; pseudos[i] != NULL; i++)
+//     //     {
+//     //         printf("%s", pseudos[i]);
+//     //     }
+
+//     //     // Libérer la mémoire allouée pour les pseudos
+//     //     for (size_t i = 0; pseudos[i] != NULL; i++)
+//     //     {
+//     //         free(pseudos[i]);
+//     //     }
+//     //     free(pseudos); // Libérer la mémoire du tableau principal
+//     // }
+//     // else
+//     // {
+//     //     printf("Erreur lors de la récupération des pseudos.\n");
+//     // }
+
+//     // int id_match = 1;
+//     // int id_manche = 1;
+
+//     // char *theme = RecupTheme(id_match, id_manche);
+//     // printf("%s\n", RecupTheme(id_match, id_manche));
+//     // if (theme)
+//     // {
+//     //     printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+//     //     free(theme);
+//     // }
+//     // else
+//     // {
+//     //     printf("Aucun thème trouvé pour le match %d et la manche %d.\n", id_match, id_manche);
+//     // }
+
+//     // return 0;
+
+//     // printf("%d",creategame("Agathe\n",
+//     //            "Achrafe\n"));
+
+//     // return 0;
+
+//     // Appel de la fonction RecupTheme avec des valeurs d'exemple pour id_match et id_manche
+//     int id_match = 1;
+//     int id_manche = 2;
+//     char *theme = RecupTheme(id_match, id_manche);
+
+//     // Vérification si la récupération du thème a réussi
+//     if (theme != NULL)
+//     {
+//         printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
+//         free(theme);
+//     }
+//     else
+//     {
+//         printf("Erreur lors de la récupération du thème.\n");
+//     }
+
+//     return 0;
+// }
+
 int main()
 {
-
-    // connexion("lucie");
-
-    // char **pseudos = fetchAllPlayers("Achrafe\n");
-    // if (pseudos)
-    // {
-    //     printf("Liste des pseudos :\n");
-
-    //     // Afficher les pseudos jusqu'à ce que NULL soit rencontré
-    //     for (size_t i = 0; pseudos[i] != NULL; i++)
-    //     {
-    //         printf("%s", pseudos[i]);
-    //     }
-
-    //     // Libérer la mémoire allouée pour les pseudos
-    //     for (size_t i = 0; pseudos[i] != NULL; i++)
-    //     {
-    //         free(pseudos[i]);
-    //     }
-    //     free(pseudos); // Libérer la mémoire du tableau principal
-    // }
-    // else
-    // {
-    //     printf("Erreur lors de la récupération des pseudos.\n");
-    // }
-
-    // int id_match = 1;
-    // int id_manche = 1;
-
-    // char *theme = RecupTheme(id_match, id_manche);
-    // printf("%s\n", RecupTheme(id_match, id_manche));
-    // if (theme)
-    // {
-    //     printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
-    //     free(theme);
-    // }
-    // else
-    // {
-    //     printf("Aucun thème trouvé pour le match %d et la manche %d.\n", id_match, id_manche);
-    // }
-
-    // return 0;
-
-    // printf("%d",creategame("Agathe\n",
-    //            "Achrafe\n"));
-
-    // return 0;
-
-    // Appel de la fonction RecupTheme avec des valeurs d'exemple pour id_match et id_manche
-    int id_match = 1;
-    int id_manche = 2;
-    char *theme = RecupTheme(id_match, id_manche);
-
-    // Vérification si la récupération du thème a réussi
-    if (theme != NULL)
-    {
-        printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, theme);
-        free(theme);
-    }
-    else
-    {
-        printf("Erreur lors de la récupération du thème.\n");
-    }
-
+    printf("%s",mettreAJourScore(1, 5, "Agathe\n", "français"));
     return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
