@@ -50,4 +50,4 @@ char** fetchAllPlayers();
  * @param id_manche 
  * @return char* 
  */
-char *RecupTheme(int id_match, int id_manche)
+char *RecupTheme(int id_match, int id_manche);
