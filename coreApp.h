@@ -32,11 +32,22 @@ char* findRandomTheme();
  * 
  * @param connected_pseudo 
  * @param recherchePseudo 
+ * @return int
  */
 int creategame(const char* connected_pseudo, const char* recherchePseudo);
 
 /**
  * @brief 
  * 
+ * @return char* 
  */
 char** fetchAllPlayers(); 
+
+/**
+ * @brief 
+ * 
+ * @param id_match 
+ * @param id_manche 
+ * @return char* 
+ */
+char *RecupTheme(int id_match, int id_manche)
