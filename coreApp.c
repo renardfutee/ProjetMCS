@@ -70,34 +70,52 @@ int recherchePseudo(const char *pseudo)
 // Fonction pour ajouter un pseudo à la liste
 void ajouterPseudo(const char *pseudo)
 {
-    // Ouvrir le fichier JSON
-    FILE *file = fopen("jsons/pseudos.json", "r");
+    // Ouvrir le fichier JSON en mode lecture/écriture
+    FILE *file = fopen("jsons/pseudos.json", "r+");
     if (file == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier.\n");
-        return 0;
+        return;
     }
 
     // Charger le contenu du fichier JSON
-    json_t *root;
-    json_error_t error;
-    root = json_loadf(file, 0, &error);
-    fclose(file);
+    json_t *root = json_loadf(file, 0, NULL);
+    if (root == NULL)
+    {
+        printf("Erreur lors du chargement du JSON.\n");
+        fclose(file);
+        return;
+    }
 
     // Vérifier si le pseudo est valide
     if (strlen(pseudo) < 3)
     {
         printf("Le pseudo doit avoir au moins 3 lettres.\n");
-        return 0;
+        fclose(file);
+        json_decref(root); // Libérer la mémoire utilisée par le JSON
+        return;
     }
 
-    // Vérifier si le pseudo existe déjà
+    // Vérifier si le champ 'pseudos' existe
     json_t *pseudosArray = json_object_get(root, "pseudos");
+    if (!json_is_array(pseudosArray))
+    {
+        printf("Le champ 'pseudos' n'est pas un tableau.\n");
+        fclose(file);
+        json_decref(root); // Libérer la mémoire utilisée par le JSON
+        return;
+    }
 
     // Ajouter le nouveau pseudo à la liste
     json_array_append_new(pseudosArray, json_string(pseudo));
-}
 
+    // Écrire les modifications dans le fichier JSON
+    fseek(file, 0, SEEK_SET); // Se positionner au début du fichier
+    json_dumpf(root, file, JSON_INDENT(4)); // Écrire le JSON dans le fichier avec indentation
+    fclose(file);
+    
+    json_decref(root); // Libérer la mémoire utilisée par le JSON
+}
 // Fonction pour trouver un thème aléatoire dans le fichier JSON
 char *findRandomTheme()
 {
@@ -243,7 +261,7 @@ int connexion(const char *pseudo)
     if (file == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier.\n");
-        return -1;
+        return 0;
     }
 
     // Charger le contenu du fichier JSON
@@ -256,7 +274,7 @@ int connexion(const char *pseudo)
     if (strlen(pseudo) < 3)
     {
         printf("Le pseudo doit avoir au moins 3 lettres.\n");
-        return -1;
+        return 0;
     }
 
     // Vérifier si le pseudo existe déjà
@@ -270,22 +288,22 @@ int connexion(const char *pseudo)
     // Ajouter le nouveau pseudo
     ajouterPseudo(pseudo);
 
-    // Enregistrer les modifications dans le fichier JSON
-    FILE *writeFile = fopen("jsons/pseudos.json", "w");
-    if (writeFile == NULL)
-    {
-        printf("Erreur lors de l'ouverture du fichier en écriture.\n");
-        return -1;
-    }
+    // // Enregistrer les modifications dans le fichier JSON
+    // FILE *writeFile = fopen("jsons/pseudos.json", "w");
+    // if (writeFile == NULL)
+    // {
+    //     printf("Erreur lors de l'ouverture du fichier en écriture.\n");
+    //     return 0;
+    // }
 
-    json_dumpf(root, writeFile, JSON_INDENT(2));
-    fclose(writeFile);
+    // json_dumpf(root, writeFile, JSON_INDENT(2));
+    // fclose(writeFile);
 
-    // Libérer la mémoire
-    json_decref(root);
+    // // Libérer la mémoire
+    // json_decref(root);
 
     printf("Le pseudo '%s' a été ajouté avec succès.\n", pseudo);
-    return 0;
+    return 1;
 }
 
 // Fonction pour afficher tous les pseudos
@@ -537,14 +555,6 @@ int chercherMotDansJSON(const char *theme, const char *mot)
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
-/*int main()
-{
-    // // Exemple d'utilisation
-    // connexion("lucie");  // Pseudo existant
-    // connexion("Jonathan");   // Pseudo ajouté
-    // connexion("ab");     // Pseudo trop court
-=======
 // int main()
 // {
 //     // // Exemple d'utilisation
@@ -559,7 +569,6 @@ int chercherMotDansJSON(const char *theme, const char *mot)
 //     // } else {
 //     //     printf("Erreur lors de la récupération du thème aléatoire.\n");
 //     // }
->>>>>>> e92f122ba48e37874c078c863c01a1f8548304f2
 
 //     // const char* connected_player = "lucie";
 
@@ -579,10 +588,13 @@ int chercherMotDansJSON(const char *theme, const char *mot)
 
 //     return 0;
 // }
-
+/*
 int main() {
-    char **pseudos = fetchAllPlayers("Achrafe\n");
 
+
+    connexion("lucie");
+
+    char **pseudos = fetchAllPlayers("Achrafe\n");
     if (pseudos) {
         printf("Liste des pseudos :\n");
 
@@ -601,10 +613,5 @@ int main() {
     }
 
     return 0;
-<<<<<<< HEAD
 }*/
-
-=======
-}
->>>>>>> e92f122ba48e37874c078c863c01a1f8548304f2
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////

@@ -8,11 +8,15 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "StreamInc.h"
 #include "reqRep.h"
 
 void dialogueClt (sock_t sd, struct sockaddr_in clt); 
+void signalHandler(int signum); 
+
+sock_t sockTemp; 
 
 int main()
 {		
@@ -55,10 +59,17 @@ void dialogueClt (sock_t sd, struct sockaddr_in clt)
 {
 	int choix;  
 	rep_t rep; 
+	struct sigaction sa;
+	
+    	sa.sa_handler = signalHandler;
+    	sigemptyset(&sa.sa_mask);
+    	sa.sa_flags = SA_RESTART;
+    	sigaction(SIGALRM, &sa, NULL);
 	
 	// Le serveur reçoit d'abord une demande de connexion 
 	rep = receiveRequete(sd); 
 	sendRep(sd, rep); 
+	sockTemp = sd; 
 	
 	do{
 		rep = receiveRequete(sd); 
@@ -66,4 +77,19 @@ void dialogueClt (sock_t sd, struct sockaddr_in clt)
 	}while(rep.nb != -100); 
 	
 	exit(0); 
+}
+
+void signalHandler(int signum) {
+	rep_t rep; 
+
+	switch(signum){
+		case SIGALRM : 
+			printf("Fin de l'alarme\n"); 
+			rep.nb = 0; 
+			strcpy(rep.msg, "Fin du temps imparti !"); 
+			sendRep(sockTemp, rep);
+		break; 
+		default: 
+		break; 
+	}
 }
