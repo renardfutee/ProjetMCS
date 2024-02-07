@@ -2,7 +2,7 @@
 
 all: clt svc trouverFichier coreApp
 
-clt: protoClient.c reqRep.c session.c data.c
+clt: protoClient.c reqRep.c session.c data.c coreApp.c
 	gcc -o clt protoClient.c session.c data.c reqRep.c coreApp.c -DCLIENT -ljansson
 
 svc: protoServeur.c  reqRep.c session.c data.c coreApp.c

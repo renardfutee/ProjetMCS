@@ -1237,6 +1237,12 @@ char *scoreGame(const char *connected_pseudo, int id_match, int id_manche)
                     int score1 = json_integer_value(json_object_get(partie, "score1"));
                     int score2 = json_integer_value(json_object_get(partie, "score2"));
 
+                    if(score1 == -1){
+                        score1 = 0;
+                    }
+                    if(score2 == -1){
+                        score2 = 0;
+                    }
                     // Construire et retourner le score sous forme de chaîne de caractères
                     if (strcmp(connected_pseudo, joueur1) == 0)
                     {
@@ -1471,6 +1477,202 @@ char *fetchAllParties(const char *connected_pseudo)
     return historique;
 }
 
+// Fonction pour l'historique de toutes les parties si c'est le tour du joueur
+char *fetchAllPartiesIfTurn(const char *connected_pseudo)
+{
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r");
+    if (fichier == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return NULL;
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    fclose(fichier);
+
+    if (!root)
+    {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        return NULL;
+    }
+
+    // Chaîne pour stocker l'historique des parties
+    char *historique = malloc(100 * sizeof(char));
+    if (historique == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation mémoire.\n");
+        json_decref(root);
+        return NULL;
+    }
+    strcpy(historique, ""); // Initialisation à une chaîne vide
+
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches))
+    {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        json_decref(root);
+        free(historique);
+        return NULL;
+    }
+
+    for (int i = 0; i < json_array_size(matches); i++)
+    {
+        json_t *match = json_array_get(matches, i);
+        const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
+        const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
+
+        // Vérifier si c'est le tour du joueur connecté
+        if (strcmp(connected_pseudo, joueur1) == 0 || strcmp(connected_pseudo, joueur2) == 0)
+        {
+            // Récupérer l'ID du match
+            int id_match = json_integer_value(json_object_get(match, "id_match"));
+
+            // Rechercher les parties correspondantes
+            json_t *parties = json_object_get(match, "parties");
+            if (!json_is_array(parties))
+            {
+                fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+                json_decref(root);
+                free(historique);
+                return NULL;
+            }
+
+            int score_J = 0;
+            int score_A = 0;
+            for (int j = 0; j < json_array_size(parties); j++)
+            {
+                json_t *partie = json_array_get(parties, j);
+                int score_joueur = json_integer_value(json_object_get(partie, "score1"));
+                int score_adversaire = json_integer_value(json_object_get(partie, "score2"));
+
+                if (strcmp(connected_pseudo, joueur1) == 0)
+                {
+                    // Si le joueur connecté est joueur 1
+                    if (score_joueur != -1)
+                    {
+                        score_J += score_joueur;
+                    }
+                    if (score_adversaire != -1)
+                    {
+                        score_A += score_adversaire;
+                    }
+                }
+                else
+                {
+                    // Si le joueur connecté est joueur 2
+                    if (score_joueur != -1)
+                    {
+                        score_J += score_adversaire;
+                    }
+                    if (score_adversaire != -1)
+                    {
+                        score_A += score_joueur;
+                    }
+                }
+            }
+
+            // Ajouter l'entrée dans l'historique
+            sprintf(historique + strlen(historique), "%d_%s:%d-%d; ", id_match, (strcmp(connected_pseudo, joueur1) == 0) ? joueur2 : joueur1,
+                    score_J, score_A);
+        }
+    }
+
+    json_decref(root);
+    return historique;
+}
+
+// Fonction pour l'historique de toutes les parties si ce n'est pas le tour du joueur
+char *fetchAllPartiesIfNotTurn(const char *connected_pseudo)
+{
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r");
+    if (fichier == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return NULL;
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    fclose(fichier);
+
+    if (!root)
+    {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        return NULL;
+    }
+
+    // Chaîne pour stocker l'historique des parties
+    char *historique = malloc(100 * sizeof(char));
+    if (historique == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation mémoire.\n");
+        json_decref(root);
+        return NULL;
+    }
+    strcpy(historique, ""); // Initialisation à une chaîne vide
+
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches))
+    {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        json_decref(root);
+        free(historique);
+        return NULL;
+    }
+
+    for (int i = 0; i < json_array_size(matches); i++)
+    {
+        json_t *match = json_array_get(matches, i);
+        const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
+        const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
+
+        // Vérifier si ce n'est pas le tour du joueur connecté
+        if (strcmp(connected_pseudo, joueur1) != 0 && strcmp(connected_pseudo, joueur2) != 0)
+        {
+            // Récupérer l'ID du match
+            int id_match = json_integer_value(json_object_get(match, "id_match"));
+
+            // Rechercher les parties correspondantes
+            json_t *parties = json_object_get(match, "parties");
+            if (!json_is_array(parties))
+            {
+                fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+                json_decref(root);
+                free(historique);
+                return NULL;
+            }
+
+            int score_J = 0;
+            int score_A = 0;
+            for (int j = 0; j < json_array_size(parties); j++)
+            {
+                json_t *partie = json_array_get(parties, j);
+                int score_joueur = json_integer_value(json_object_get(partie, "score1"));
+                int score_adversaire = json_integer_value(json_object_get(partie, "score2"));
+
+                // Si le joueur connecté n'est pas impliqué dans le match
+                if (score_joueur != -1)
+                {
+                    score_J += score_joueur;
+                }
+                if (score_adversaire != -1)
+                {
+                    score_A += score_adversaire;
+                }
+            }
+
+            // Ajouter l'entrée dans l'historique
+            sprintf(historique + strlen(historique), "%d_%s:%d-%d; ", id_match, joueur1, score_J, score_A);
+        }
+    }
+
+    json_decref(root);
+    return historique;
+}
+
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
@@ -1648,4 +1850,5 @@ int main()
 
     return 0;
 }
+
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
