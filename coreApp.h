@@ -23,6 +23,17 @@ int connexion(const char * pseudo);
 /**
  * @brief 
  * 
+ * @param id_match 
+ * @param id_manche 
+ * @param pseudo 
+ * @param mot 
+ * @return int 
+ */
+int mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot);
+
+/**
+ * @brief 
+ * 
  * @return char 
  */
 char* findRandomTheme();

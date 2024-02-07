@@ -22,6 +22,59 @@ void removeAccentsAndUppercase(char *str)
     }
 }
 
+
+void supprimerAccoladeSupplementaire() {
+    // Ouvrir le fichier JSON en mode lecture et écriture
+    FILE *fichier = fopen("jsons/matches.json", "r+");
+    if (fichier == NULL) {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return;
+    }
+
+    // Se déplacer à la fin du fichier
+    fseek(fichier, 0, SEEK_END);
+    long tailleFichier = ftell(fichier);
+
+    // Vérifier si le fichier est vide ou a une taille insuffisante pour contenir deux accolades
+    if (tailleFichier < 2) {
+        fprintf(stderr, "Erreur : Taille de fichier insuffisante.\n");
+        fclose(fichier);
+        return;
+    }
+
+    // Lire les deux derniers caractères
+    char dernierCaractere, avantDernierCaractere;
+    do {
+        // Se déplacer à l'avant-dernier caractère
+        fseek(fichier, -2, SEEK_CUR);
+
+        // Lire le caractère
+        avantDernierCaractere = fgetc(fichier);
+
+        // Si l'avant-dernier caractère est une accolade, lire le dernier caractère
+        if (avantDernierCaractere == '}') {
+            fseek(fichier, -1, SEEK_CUR);
+            dernierCaractere = fgetc(fichier);
+        } else {
+            // Sinon, déplacer le curseur à la fin du fichier
+            fseek(fichier, 0, SEEK_END);
+            dernierCaractere = '\0'; // Caractère nul pour indiquer qu'aucune accolade supplémentaire n'a été trouvée
+        }
+    } while (avantDernierCaractere == '}');
+
+    // Si les deux derniers caractères sont "}}", supprimer le dernier
+    if (avantDernierCaractere == '}' && dernierCaractere == '}') {
+        fseek(fichier, -1, SEEK_END);
+        ftruncate(fileno(fichier), tailleFichier - 1); // Tronquer le fichier d'un caractère
+        printf("Une accolade supplémentaire a été supprimée.\n");
+    } else {
+        printf("Pas d'accolade supplémentaire à supprimer.\n");
+    }
+
+    // Fermer le fichier
+    fclose(fichier);
+}
+
 // Fonction pour rechercher un pseudo dans la liste
 int recherchePseudo(const char *pseudo)
 {
@@ -681,15 +734,16 @@ char *RecupTheme(int id_match, int id_manche)
     return NULL;
 }
 
-// Fonction pour mettre à jour le score
-char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot)
+
+   // Fonction pour mettre à jour le score
+int mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot)
 {
     // Récupérer le thème
     const char *theme = RecupTheme(id_match, id_manche);
     if (theme == NULL)
     {
         fprintf(stderr, "Erreur : Impossible de récupérer le thème.\n");
-        return "-1";
+        return -1;
     }
 
     // Récupérer le score pour l'instant
@@ -697,7 +751,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
     if (score == -1)
     {
         fprintf(stderr, "Erreur : Impossible de récupérer le score.\n");
-        return "-1";
+        return -1;
     }
 
     // Ouvrir et lire le fichier JSON
@@ -705,7 +759,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
     if (fichier == NULL)
     {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
-        return "-1";
+        return -1;
     }
 
     json_error_t error;
@@ -714,7 +768,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
     {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         fclose(fichier);
-        return "-1";
+        return -1;
     }
 
     // Recherche du match correspondant
@@ -724,7 +778,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         fclose(fichier);
         json_decref(root);
-        return "-1";
+        return -1;
     }
 
     int i;
@@ -738,7 +792,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
             fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
             fclose(fichier);
             json_decref(root);
-            return "-1";
+            return -1;
         }
 
         int j;
@@ -775,7 +829,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
                     fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
                     fclose(fichier);
                     json_decref(root);
-                    return "-1";
+                    return -1;
                 }
 
                 // Enregistrement des modifications dans le fichier JSON
@@ -786,7 +840,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
                     fprintf(stderr, "Erreur : Impossible de convertir le JSON modifié en chaîne de caractères.\n");
                     fclose(fichier);
                     json_decref(root);
-                    return "-1";
+                    return -1;
                 }
                 fwrite(json_string, 1, strlen(json_string), fichier); // Écrire la chaîne de caractères indentée dans le fichier
                 free(json_string); // Libérer la mémoire allouée pour la chaîne de caractères
@@ -799,10 +853,11 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
                 if (score_string == NULL)
                 {
                     fprintf(stderr, "Erreur : Impossible d'allouer de la mémoire.\n");
-                    return "-1";
+                    return -1;
                 }
                 sprintf(score_string, "%d", score);
-                return score_string;
+                supprimerAccoladeSupplementaire();
+                return score;
             }
         }
     }
@@ -810,7 +865,7 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
     fprintf(stderr, "Erreur : ID de match non trouvé dans le fichier JSON.\n");
     fclose(fichier);
     json_decref(root);
-    return "-1";
+    return -1;
 }
 
 // Fonction pour récupérer l'adversaire du joueur pour une partie donnée
@@ -844,6 +899,7 @@ char *getAdversaire(const char *connected_pseudo, int id_match)
     }
 
     int i;
+    
     for (i = 0; i < json_array_size(matches); i++)
     {
         json_t *match = json_array_get(matches, i);
@@ -860,7 +916,7 @@ char *getAdversaire(const char *connected_pseudo, int id_match)
         for (j = 0; j < json_array_size(parties); j++)
         {
             json_t *partie = json_array_get(parties, j);
-            json_t *idPartie_json = json_object_get(partie, "id_manche");
+            json_t *idPartie_json = json_object_get(partie, "id_match");
             if (!json_is_integer(idPartie_json))
             {
                 fprintf(stderr, "Erreur : \"id_manche\" n'est pas un entier JSON.\n");
@@ -883,12 +939,6 @@ char *getAdversaire(const char *connected_pseudo, int id_match)
                     char *adversaire = strdup(joueur1);
                     json_decref(root);
                     return adversaire;
-                }
-                else
-                {
-                    fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
-                    json_decref(root);
-                    return NULL;
                 }
             }
         }

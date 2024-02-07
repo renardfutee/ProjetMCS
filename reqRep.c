@@ -212,11 +212,15 @@ void getProchaineManche(rep_t * rep, reqSimple_t req)
 }
 
 void changerTour(rep_t * rep, reqSimple_t req)
-{
+{	
+	reqComplete_t reqComplete; 
+
+	deSerialComplete(&reqComplete, &req);
+
 	// TODO fonction qui change le tour de la partie (met fin si c'était la dernière manche)
-	changementTour(req.nb, atoi(req.msg));
-	printf("---> Changer le tour de la partie");
-	printf("Identifiant de la partie: %d <---> Nouveau tour : %s\n", req.nb, req.msg); 
+	
+	changementTour(atoi(reqComplete.msg2), 1);
+	
 	rep->nb = 1; 
 	strcpy(rep->msg, " "); 
 }
@@ -227,7 +231,6 @@ void lancerPartie(rep_t * rep, reqSimple_t req)
 	char chaineId[MAX_BUFF]; 
 	reqComplete_t reqComplete; 
 
-	// TODO récuperer le numéro de la partie 
 	deSerialComplete(&reqComplete, &req);
 	printf("---> Lancement de partie entre les utilisateur %s et %s\n", reqComplete.msg, reqComplete.msg2);  
 	idPartie = creategame(reqComplete.msg, reqComplete.msg2);
@@ -318,7 +321,27 @@ void getReponse(rep_t * rep, reqSimple_t req)
 	printf("---> Verification de réponse\n");
 	//TODO Modifier le score du joueur qui a joué et récuperer le score obtenu grace à CETTE réponse
 	rep->nb = 1; 
-	strcpy(rep->msg, mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse));
+	int score = mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse);
+	if(score == -1){
+		strcpy(rep->msg, "0");
+	}
+	else if(score == 1){
+		printf("Score == 1\n");
+		strcpy(rep->msg, "1");
+	}
+	else if(score == 2){
+		strcpy(rep->msg, "2");
+	}
+	else if(score == 3){
+		strcpy(rep->msg, "3");
+	}
+	else {
+		strcpy(rep->msg, "0");
+	}
+	printf(" rep msg   %s", rep->msg);
+	printf("\n");
+	printf(" score !! -----%d ----", score);
+	//strcpy(rep->msg, );
 	// strcpy(rep->msg, " ");
 }
 

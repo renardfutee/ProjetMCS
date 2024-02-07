@@ -236,7 +236,7 @@ void jouerManche(sock_t sock, char *username, char *adv, int idPartie, int numMa
         printf(RESET "-------------------------------------------------\n");
         printf("\n"); 
         sprintf(buff, "%d", idPartie);
-  	sendRequete(sock, CHANGER_TOUR, adv,buff , NULL, NULL); 
+  	sendRequete(sock, CHANGER_TOUR, adv,buff , NULL, NULL);
   	reponseServeur = receiveReponse(sock);
   	 
 }
