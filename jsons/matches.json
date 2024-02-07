@@ -5,41 +5,44 @@
             "joueur2": "Achrafe\n",
             "score1": 0,
             "score2": 0,
+            "id_match": 1,
+            "tour": "Agathe\n",
+            "etat": 0,
             "parties": [
                 {
                     "id_match": 1,
                     "id_manche": 1,
-                    "theme": "Verbes pour les Sons d'Animaux",
-                    "score1": 0,
-                    "score2": 0
+                    "theme": "Pays commencant par P",
+                    "score1": -1,
+                    "score2": -1
                 },
                 {
                     "id_match": 1,
                     "id_manche": 2,
-                    "theme": "RacesChiens",
-                    "score1": 0,
-                    "score2": 0
+                    "theme": "Films de Spielberg",
+                    "score1": -1,
+                    "score2": -1
                 },
                 {
                     "id_match": 1,
                     "id_manche": 3,
-                    "theme": "Marques de Chaussures",
-                    "score1": 0,
-                    "score2": 0
+                    "theme": "Langues",
+                    "score1": -1,
+                    "score2": -1
                 },
                 {
                     "id_match": 1,
                     "id_manche": 4,
-                    "theme": "Joueurs de l'EDF",
-                    "score1": 0,
-                    "score2": 0
+                    "theme": "Metiers Commencant par M",
+                    "score1": -1,
+                    "score2": -1
                 },
                 {
                     "id_match": 1,
                     "id_manche": 5,
-                    "theme": "Langues",
-                    "score1": 0,
-                    "score2": 0
+                    "theme": "Sports avec une Balle",
+                    "score1": -1,
+                    "score2": -1
                 }
             ]
         }

@@ -51,3 +51,38 @@ char** fetchAllPlayers();
  * @return char* 
  */
 char *RecupTheme(int id_match, int id_manche);
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @param idPartie 
+ * @return char* 
+ */
+char *getAdversaire(const char *connected_pseudo, int idPartie);
+
+/**
+ * @brief 
+ * 
+ * @param id_match 
+ * @param id_manche 
+ * @return int 
+ */
+int changementTour(int id_match, int id_manche);
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @param id_match 
+ * @return int 
+ */
+int verifGame(const char* connected_pseudo, int id_match);
+
+/**
+ * @brief 
+ * 
+ * @param id_match 
+ * @return int 
+ */
+int nextManche(int id_match);

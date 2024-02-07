@@ -1,0 +1,45 @@
+/TODO récuperer toutes les parties ou le tour = pseudo dans une seule chaine de caractère par exemple "5_Agathe:1-5; 6_Achraf:2-6;" 
+char * fetchAllParties(const char * pseudo){
+//ca retourne quoi
+};
+
+
+// TODO retourner le numéro de la prochaine manche à faire (ou 0 si le jeu est terminé) 
+// Si la manche 1 est joué, on retourne 2. Je pense que au pire tu peux mettre le score de toute les manches à -1 quand on crée une partie et quand on joue on met 0 ou le score. Comme ça en regardant les scores on pourra savoir quelle partie a pas encore été jouée
+int nextManche(int idPartie){
+//j'ai pas compris
+}
+
+// TODO fonction qui change le tour de la partie (met fin si c'était la dernière manche) (on peut retourner 1 si la partie est pas terminée et 0 sinon)
+int changementTour(int id_match,int id_manche){
+}
+
+// TODO récuperer le numéro de la partie 
+int creategame(const char* connected_pseudo, const char* recherchePseudo)
+{
+}
+
+// TODO vérifier que l'identifiant de la partie existe déjà et que c'est bien le tour du joueur. Renvoyer -1 si non 
+int verifGame(const char* connected_pseudo, int idPartie)
+{
+}
+
+// TODO fonction qui récupère l'adversaire du joueur pour la partie donnée
+char getAdversaire(const char connected_pseudo, int idPartie)
+{
+}
+
+// TODO utiliser une fonction pour récupérer le theme correspondant à la partie
+char RecupTheme(int id_match, int id_manche)
+{
+}
+
+// TODO récupérer le score du match de la partie (toujours le score du joueur connecté en premier) exemple : "10:3"
+char scoreGame(const char connected_pseudo, int idPartie)
+{
+}
+
+//TODO Modifier le score du joueur qui a joué et récuperer le score obtenu grace à CETTE réponse (par exemple si on donne une réponse qui vaut 3 points, on ajoute 3 au score du joueur et on retourne 3)
+int compterScore(const char* connected_pseudo, const char* reponse, int idPartie, int idManche)
+{
+}
