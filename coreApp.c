@@ -1836,7 +1836,7 @@ int main()
             scanf("%d", &id_match);
             printf("Entrez l'ID de la manche : ");
             scanf("%d", &id_manche);
-            printf("Entrez le score à ajouter : ");
+            printf("Entrez le mot : ");
             scanf("%s", mot);
             printf("Résultat de la mise à jour du score : %s\n", mettreAJourScore(id_match, id_manche, connected_pseudo, mot));
         case 0:
