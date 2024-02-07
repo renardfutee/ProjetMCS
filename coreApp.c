@@ -779,8 +779,18 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
                 }
 
                 // Enregistrement des modifications dans le fichier JSON
-                fseek(fichier, 0, SEEK_SET);
-                json_dumpf(root, fichier, JSON_COMPACT);
+                fseek(fichier, 0, SEEK_SET); // Réinitialiser la position du curseur au début du fichier
+                char *json_string = json_dumps(root, JSON_INDENT(4));
+                if (json_string == NULL)
+                {
+                    fprintf(stderr, "Erreur : Impossible de convertir le JSON modifié en chaîne de caractères.\n");
+                    fclose(fichier);
+                    json_decref(root);
+                    return "-1";
+                }
+                fwrite(json_string, 1, strlen(json_string), fichier); // Écrire la chaîne de caractères indentée dans le fichier
+                free(json_string); // Libérer la mémoire allouée pour la chaîne de caractères
+
                 fclose(fichier);
                 json_decref(root);
 
@@ -1428,11 +1438,11 @@ char *fetchAllParties(const char *connected_pseudo)
                 if (strcmp(connected_pseudo, joueur1) == 0)
                 {
                     // Si le joueur connecté est joueur 1
-                    if(score_joueur != -1)
+                    if (score_joueur != -1)
                     {
                         score_J += score_joueur;
                     }
-                    if(score_adversaire != -1)
+                    if (score_adversaire != -1)
                     {
                         score_A += score_adversaire;
                     }
@@ -1440,15 +1450,14 @@ char *fetchAllParties(const char *connected_pseudo)
                 else
                 {
                     // Si le joueur connecté est joueur 2
-                    if(score_joueur != -1)
+                    if (score_joueur != -1)
                     {
                         score_J += score_adversaire;
                     }
-                    if(score_adversaire != -1)
+                    if (score_adversaire != -1)
                     {
                         score_A += score_joueur;
                     }
-                    
                 }
             }
 
@@ -1492,6 +1501,7 @@ int main()
         printf("10. Récupérer le score de la manche\n");
         printf("11. Récupérer le score de la partie\n");
         printf("12. Historique de toutes les parties\n");
+        printf("13. Mettre à jour le score\n");
         printf("0. Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
@@ -1616,6 +1626,17 @@ int main()
                 free(historique); // Libérer la mémoire allouée pour l'historique
             }
             break;
+        case 13:
+            char mot[20];
+            printf("Entrez le pseudo du joueur connecté : ");
+            scanf("%s", connected_pseudo);
+            printf("Entrez l'ID du match : ");
+            scanf("%d", &id_match);
+            printf("Entrez l'ID de la manche : ");
+            scanf("%d", &id_manche);
+            printf("Entrez le score à ajouter : ");
+            scanf("%s", mot);
+            printf("Résultat de la mise à jour du score : %s\n", mettreAJourScore(id_match, id_manche, connected_pseudo, mot));
         case 0:
             printf("Au revoir !\n");
             break;

@@ -20,7 +20,7 @@
                     "id_manche": 2,
                     "theme": "Joueurs de l'EDF",
                     "score1": 22,
-                    "score2": -1
+                    "score2": 2
                 },
                 {
                     "id_match": 1,
@@ -71,7 +71,7 @@
                     "id_match": 2,
                     "id_manche": 3,
                     "theme": "Personnages de la Bible",
-                    "score1": -1,
+                    "score1": 2,
                     "score2": 33
                 },
                 {
@@ -85,7 +85,7 @@
                     "id_match": 2,
                     "id_manche": 5,
                     "theme": "Sports avec une Balle",
-                    "score1": -1,
+                    "score1": 3,
                     "score2": -1
                 }
             ]
