@@ -5,20 +5,7 @@
 
 #include "reqRep.h"
 
-void sendRequete(sock_t sd, type_req type, generic attr1, generic attr2,  generic attr3, generic attr4)
-{
-	if(type == 0)
-		createReq(sd, type); 
-	else if(type > 0 && type <= 5)
-		createReqSimple(sd, type, attr1);
-	else if(type <= 9)
-		createReqComptele(sd, type, attr1, attr2); 
-	else if(type <= 11)
-		createReqComplexe(sd,type, attr1, attr2, attr3); 
-	else 
-		createReqRep(sd,type, attr1, attr2, attr3, attr4); 
-}
-
+/*--------------------------------------------------------------------------Creation des requêtes----------------------------------------------------------------------------------------------------*/
 void createReq(sock_t sock, int nb)
 {
 	char chaine[5]; 
@@ -73,12 +60,29 @@ void createReqRep(sock_t sock,int nb, char *joueur, char *reponse, int idPartie,
  	envoyer(sock, &requete, serialRep);
 }
 
+/*--------------------------------------------------------------------------Envoi req/rep --------------------------------------------------------------------------------------------------------*/
+
+void sendRequete(sock_t sd, type_req type, generic attr1, generic attr2,  generic attr3, generic attr4)
+{
+	if(type == 0)
+		createReq(sd, type); 
+	else if(type > 0 && type <= 6)
+		createReqSimple(sd, type, attr1);
+	else if(type <= 11)
+		createReqComptele(sd, type, attr1, attr2); 
+	else if(type <= 13)
+		createReqComplexe(sd,type, attr1, attr2, attr3); 
+	else 
+		createReqRep(sd,type, attr1, attr2, attr3, attr4); 
+}
+
 void sendRep(sock_t sd, rep_t reponse)
 {
 	printf("send %d -> \"%s\"\n", reponse.nb, reponse.msg); 
 	envoyer(sd, &reponse, serial); 
 }
 
+/*--------------------------------------------------------------------------Reception req/rep ------------------------------------------------------------------------------------------------------*/
 rep_t receiveRequete(sock_t sd)
 {
 	int result; 
@@ -108,24 +112,30 @@ rep_t receiveRequete(sock_t sd)
 			getProchaineManche(&rep, req); 
 		break; 
 		case 6:
+			listerPartieLeurTour(&rep, req);
+		break; 
+		case 7:
 			lancerPartie(&rep, req); 
 		break;
-		case 7:
+		case 8:
 			changerTour(&rep, req); 
 		break; 
-		case 8:
+		case 9:
 			verif_jouer(&rep, req); 
 		break;
-		case 9:
+		case 10:
 			getAdv(&rep, req); 
 		break;  
-		case 10:
+		case 11:
+			getFinalScore(&rep, req); 
+		break;
+		case 12:
 			lancerManche(&rep, req);  
 		break; 
-		case 11:
+		case 13:
 			getScore(&rep, req); 
 		break; 
-		case 12:
+		case 14:
 			getReponse(&rep, req);  
 		break; 
 		default:
@@ -137,6 +147,21 @@ rep_t receiveRequete(sock_t sd)
 		
 	return rep; 
 }
+
+rep_t receiveReponse(sock_t sd)
+{
+	rep_t rep; 	
+	
+	recevoir(sd, &rep, deSerial);
+	printf("%s\n", rep.msg);
+	
+	if(rep.nb == -1)
+		exit(0);  
+		
+	return rep; 
+}
+
+/*--------------------------------------------------------------------------Traitements de requête ------------------------------------------------------------------------------------------------*/
 
 void deconnecter(rep_t * rep)
 {
@@ -203,8 +228,7 @@ void getProchaineManche(rep_t * rep, reqSimple_t req)
 
 	// TODO retourner le numéro de la prochaine manche à faire (ou 0 si le jeu est terminé) 
 	printf("---> Récuperer le numéro de la prochaine manche de la partie %d\n", atoi(req.msg)); 
-	printf("Prochaine manche : %d\n", nextManche(atoi(req.msg))); 
-	rep->nb = manche; 
+	rep->nb = 1; 
 	
 	if(manche == -1)
 		rep->nb = 0;
@@ -212,13 +236,22 @@ void getProchaineManche(rep_t * rep, reqSimple_t req)
 	strcpy(rep->msg, " "); 
 }
 
+void listerPartieLeurTour(rep_t * rep, reqSimple_t req)
+{
+	//TODO récuperer toutes les parties ou le tour = pseudo dans une seule chaine de caractère ==> "5_Agathe:1-5; 6_Achraf:2-6;" 
+	printf("---> L'utilisateur '%s' souhaite lister les parties ou c'est le tour de l'adversaire\n", req.msg); 
+	
+	rep->nb = 1; 
+	strcpy(rep->msg, "5_Agathe:1-5; 6_Achraf:2-6;"); 
+}
+
 void changerTour(rep_t * rep, reqSimple_t req)
 {
-	// TODO fonction qui change le tour de la partie (met fin si c'était la dernière manche)
-	changementTour(req.nb, atoi(req.msg));
-	printf("---> Changer le tour de la partie");
-	printf("Identifiant de la partie: %d <---> Nouveau tour : %s\n", req.nb, req.msg); 
-	rep->nb = 1; 
+	int nb; 
+	
+	// TODO fonction qui change le tour de la partie (renvoie 0 si c'était la dernière manche)
+	printf("--->Identifiant de la partie: %d <---> Nouveau tour : %s\n", req.nb, req.msg); 
+	rep->nb = 0;  
 	strcpy(rep->msg, " "); 
 }
 
@@ -243,11 +276,11 @@ void verif_jouer(rep_t * rep, reqSimple_t req)
 	char chaine[MAX_BUFF]; 
 	reqComplete_t reqComplete; 
 
+	// TODO result = fonction qui vérifie si c'est un bien à mon tour de jouer
 	printf("Debut de la fonciton verif\n"); 
 	deSerialComplete(&reqComplete, &req);
 	printf("%d--->L'utilisateur %s souhaite jouer à la partie d'identifiant %d  ", req.nb, reqComplete.msg, atoi(reqComplete.msg2)); 
-	printf("Résultat de la vérification du tour : %d\n", verifGame(reqComplete.msg, atoi(reqComplete.msg2)));
-	result = verifGame(reqComplete.msg, atoi(reqComplete.msg2)); 
+	result = 1; 
 	rep->nb = result; 
 	
 	if(result < 0) {
@@ -266,12 +299,24 @@ void getAdv(rep_t * rep, reqSimple_t req)
 	deSerialComplete(&reqComplete, &req);
 	printf("--->L'utilisateur %s souhaite connaitre l'adversaire de la partie %d\n", reqComplete.msg, atoi(reqComplete.msg2)); 
 	// TODO fonction qui récupère l'adversaire du joueur pour la partie donnée
-	strcpy(adv, getAdversaire(reqComplete.msg, atoi(reqComplete.msg2)));
+	// strcpy(adv, getAdversaire(reqComplete.msg, atoi(reqComplete.msg2)));
+	strcpy(adv, "Agathe");
+	
 	rep->nb = 1; 
 	strcpy(rep->msg, adv); 
 	
 }
 
+void getFinalScore(rep_t * rep, reqSimple_t req)
+{
+	reqComplete_t reqComplete; 
+	
+	// TODO vérifier que la fonction renvoie bien le bon score
+	deSerialComplete(&reqComplete, &req);
+	printf("----> L'utilisateur %s souhaite consulter le score final de la partie %d\n", reqComplete.msg, atoi(reqComplete.msg2)); 
+	rep->nb = 1; 
+	strcpy(rep->msg, scorePartie(reqComplete.msg, atoi(reqComplete.msg2))); 
+}
 
 void lancerManche(rep_t * rep, reqSimple_t req)
 {
@@ -312,37 +357,24 @@ void getScore(rep_t * rep, reqSimple_t req)
 
 void getReponse(rep_t * rep, reqSimple_t req)
 {
-	int points; 
+	char points[5];
 	reqReponse_t reqRep; 
 
 	deSerialReponse(&reqRep, &req);
 	printf("---> Verification de réponse\n");
 	//TODO Modifier le score du joueur qui a joué et récuperer le score obtenu grace à CETTE réponse
 	rep->nb = 1; 
-	strcpy(rep->msg, mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse));
-	// strcpy(rep->msg, " ");
+	//strcpy(points, mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse));
+	strcpy(points, "3"); 
+	printf("-----> %s\n", points); 
+	
+	if ((atoi(points) <= 0))
+		strcpy(rep->msg, "0");
+	else
+		strcpy(rep->msg, points);
 }
 
-rep_t receiveReponse(sock_t sd)
-{
-	rep_t rep; 	
-	
-	recevoir(sd, &rep, deSerial);
-	printf("%s\n", rep.msg);
-	
-	if(rep.nb == -1)
-		exit(0);  
-		
-	return rep; 
-}
-
-/********************************************************************************************************************************************************************************************************
-	fonction	:	void serial(generic quoi, generic buff); 
-	brief		: 	Serialise une requête 
-	param		: 	generic quoi = requete à sérialiser 
-				generic buff = requete serialisée
-	result		: 	
-********************************************************************************************************************************************************************************************************/
+/*--------------------------------------------------------------------------Serialisation --------------------------------------------------------------------------------------------------------*/
 void serial(generic quoi, generic buff) 
 {
     	reqSimple_t req = *(reqSimple_t *) quoi;
@@ -370,13 +402,8 @@ void serialRep(generic quoi, generic buff)
 	
 	sprintf(*(buff_t *) buff, "%d:%s:%s:%d:%d", req.nb, req.user, req.reponse, req.idPartie, req.idManche);
 }
-/********************************************************************************************************************************************************************************************************
-	fonction	:	void serial(generic quoi, generic buff); 
-	brief		: 	Serialise une requête 
-	param		: 	generic quoi = requete à sérialiser 
-				generic buff = requete serialisée
-	result		: 	
-********************************************************************************************************************************************************************************************************/
+
+/*--------------------------------------------------------------------------Deserialisation --------------------------------------------------------------------------------------------------------*/
 void deSerial(generic quoi, generic buff) 
 {
 		reqSimple_t *req = (reqSimple_t *) quoi;

@@ -27,6 +27,7 @@ typedef struct {
 void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username);
 void afficherPartie(int nbManche,int nbReponse , char *joueur, char *adv, char *theme, joueurRep_t* tableau); 
 void jouerManche(sock_t sock, char *username, char *adv, int idPartie, int numManche); 
+void afficherParties(char *parties); 
 
 int main(int argc, char *argv[]){
 	char username[MAX_BUFF];
@@ -70,6 +71,7 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 		printf("0 - Quitter le jeu\n"); 
 		printf("1 - Commencer une nouvelle partie\n"); 
 		printf("2 - Mon tour\n"); 
+		printf("3 - Leur tour\n"); 
 		scanf("%d", &choix); 
 		
 		switch(choix){
@@ -126,7 +128,7 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 						i = i + 1; 
 					}while(buff[i] != '\0'); 
 					
-					printf("Choisir un numéro pour continuer la partie (choisir 0 pour ne pas jouer) : "); 
+					printf("\nChoisir un numéro pour continuer la partie (choisir 0 pour ne pas jouer) : "); 
 					do{
 						printf("-->");
 						scanf("%d", &idPartie); 
@@ -153,6 +155,11 @@ void dialogueSrv (sock_t sd, struct sockaddr_in *srv, char *username) {
 				}
 				printf("\n");
 				
+			break;
+			case 3:
+				sendRequete(sd, GET_PARTIE_LEUR_TOUR, username, NULL, NULL, NULL);  
+				reponseServeur = receiveReponse(sd); 
+				afficherParties(reponseServeur.msg); 
 			break; 
 			default:  
 			break ; 
@@ -238,5 +245,43 @@ void jouerManche(sock_t sock, char *username, char *adv, int idPartie, int numMa
         sprintf(buff, "%d", idPartie);
   	sendRequete(sock, CHANGER_TOUR, adv,buff , NULL, NULL); 
   	reponseServeur = receiveReponse(sock);
-  	 
+
+  	if(reponseServeur.nb == 0){
+  		printf("Fin de la partie\n");
+  		sprintf(buff, "%d", idPartie);
+  		sendRequete(sock, GET_SCORE_FINAL, username, buff, NULL, NULL); 
+  		 printf("-------------------------------------------------\n");
+  		 printf("|\t\tSCORE FINAL: "); 
+  		 reponseServeur = receiveReponse(sock);
+  		 sscanf(reponseServeur.msg,"%i-%i",&score1, &score2);
+  		
+  		if(score1 > score2)
+  			printf(GREEN "|\t\tVICTOIRE !!!!\t\t\t|\n" RESET); 
+  		else if(score1 == score2)
+  			printf(BLUE "|\t\tEGALITE\t\t\t|\n" RESET); 
+  		else
+  			printf(RED "|\t\tDEFAITE...\t\t\t|\n" RESET); 
+  		
+  		 printf("-------------------------------------------------\n"); 
+  	}
+}
+
+void afficherParties(char *parties)
+{
+	int i = 0; 
+	printf("\n------------------------------------------\n");  
+					
+	do{
+		if(parties[i] == ':')
+			printf("\t");
+		else if(parties[i] == '_')
+			printf("  →\t"); 
+		else if(parties[i] == ';')
+			printf("\n------------------------------------------\n"); 
+		else if(parties[i] != ' ') 
+			printf("%c", parties[i]); 
+	
+		i = i + 1; 
+	}while(parties[i] != '\0'); 
+	
 }
