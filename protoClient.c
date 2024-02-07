@@ -243,8 +243,9 @@ void jouerManche(sock_t sock, char *username, char *adv, int idPartie, int numMa
         printf(RESET "-------------------------------------------------\n");
         printf("\n"); 
         sprintf(buff, "%d", idPartie);
-  	sendRequete(sock, CHANGER_TOUR, adv,buff , NULL, NULL); 
+  	sendRequete(sock, CHANGER_TOUR, adv,buff , NULL, NULL);
   	reponseServeur = receiveReponse(sock);
+<<<<<<< HEAD
 
   	if(reponseServeur.nb == 0){
   		printf("Fin de la partie\n");
@@ -285,3 +286,7 @@ void afficherParties(char *parties)
 	}while(parties[i] != '\0'); 
 	
 }
+=======
+  	 
+}
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370

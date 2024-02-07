@@ -80,7 +80,7 @@
     "sac a dos": 2,
     "guide de conversation": 1,
     "jumelles": 1
-},
+  },
   "Joueurs de l'EDF": {
     "mbappe": 1,
     "griezmann": 1,
@@ -112,7 +112,7 @@
     "gouiri": 3,
     "upamecano": 1,
     "lecomte": 2
-},
+  },
   "Marques de Chaussures": {
     "nike": 1,
     "adidas": 1,
@@ -478,4 +478,8 @@
   "persan": 2
 }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370

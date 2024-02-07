@@ -1,1 +1,98 @@
+<<<<<<< HEAD
 {"matches":[{"joueur1":"Achrafe","joueur2":"Adele","score1":-1,"score2":-1,"id_match":1,"tour":"Achrafe","parties":[{"id_match":1,"id_manche":1,"theme":"Films de Spielberg","score1":11,"score2":-1},{"id_match":1,"id_manche":2,"theme":"Joueurs de l'EDF","score1":22,"score2":2},{"id_match":1,"id_manche":3,"theme":"Fruits Jaunes","score1":-1,"score2":33},{"id_match":1,"id_manche":4,"theme":"Synonymes de Petit","score1":-1,"score2":-1},{"id_match":1,"id_manche":5,"theme":"Choses Indispensables en Vacances","score1":-1,"score2":-1}]},{"joueur1":"Arthur","joueur2":"Achrafe","score1":0,"score2":0,"id_match":2,"tour":"Arthur","parties":[{"id_match":2,"id_manche":1,"theme":"Choses Indispensables en Vacances","score1":0,"score2":-1},{"id_match":2,"id_manche":2,"theme":"Joueurs de l'EDF","score1":22,"score2":-1},{"id_match":2,"id_manche":3,"theme":"Personnages de la Bible","score1":2,"score2":33},{"id_match":2,"id_manche":4,"theme":"RacesChiens","score1":-1,"score2":44},{"id_match":2,"id_manche":5,"theme":"Sports avec une Balle","score1":3,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":3,"tour":"Achrafe","parties":[{"id_match":3,"id_manche":1,"theme":"Pays commencant par P","score1":0,"score2":-1},{"id_match":3,"id_manche":2,"theme":"Synonymes de Petit","score1":-1,"score2":-1},{"id_match":3,"id_manche":3,"theme":"Personnages de la Bible","score1":-1,"score2":-1},{"id_match":3,"id_manche":4,"theme":"Metiers Commencant par M","score1":-1,"score2":-1},{"id_match":3,"id_manche":5,"theme":"Langues","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":4,"tour":"Achrafe","parties":[{"id_match":4,"id_manche":1,"theme":"Films de Spielberg","score1":1,"score2":-1},{"id_match":4,"id_manche":2,"theme":"Metiers Commencant par M","score1":-1,"score2":-1},{"id_match":4,"id_manche":3,"theme":"Marques de Chaussures","score1":-1,"score2":-1},{"id_match":4,"id_manche":4,"theme":"Fruits Jaunes","score1":-1,"score2":-1},{"id_match":4,"id_manche":5,"theme":"Sports avec une Balle","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":5,"tour":"Achrafe","parties":[{"id_match":5,"id_manche":1,"theme":"Composants d'Ordinateurs","score1":0,"score2":-1},{"id_match":5,"id_manche":2,"theme":"Metiers Commencant par M","score1":-1,"score2":-1},{"id_match":5,"id_manche":3,"theme":"Joueurs de l'EDF","score1":-1,"score2":-1},{"id_match":5,"id_manche":4,"theme":"Jeux de Casinos","score1":-1,"score2":-1},{"id_match":5,"id_manche":5,"theme":"Verbes pour les Sons d'Animaux","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Agathe","score1":0,"score2":0,"id_match":6,"tour":"Achrafe","parties":[{"id_match":6,"id_manche":1,"theme":"Verbes pour les Sons d'Animaux","score1":-1,"score2":-1},{"id_match":6,"id_manche":2,"theme":"Jeux de Casinos","score1":-1,"score2":-1},{"id_match":6,"id_manche":3,"theme":"Composants d'Ordinateurs","score1":-1,"score2":-1},{"id_match":6,"id_manche":4,"theme":"Langues","score1":-1,"score2":-1},{"id_match":6,"id_manche":5,"theme":"RacesChiens","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":7,"tour":"Achrafe","parties":[{"id_match":7,"id_manche":1,"theme":"Moyen de Transports","score1":-1,"score2":-1},{"id_match":7,"id_manche":2,"theme":"Films de Spielberg","score1":-1,"score2":-1},{"id_match":7,"id_manche":3,"theme":"Jeux de Casinos","score1":-1,"score2":-1},{"id_match":7,"id_manche":4,"theme":"Joueurs de l'EDF","score1":-1,"score2":-1},{"id_match":7,"id_manche":5,"theme":"RacesChiens","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":8,"tour":"Achrafe","parties":[{"id_match":8,"id_manche":1,"theme":"Pays commencant par P","score1":-1,"score2":-1},{"id_match":8,"id_manche":2,"theme":"Moyen de Transports","score1":-1,"score2":-1},{"id_match":8,"id_manche":3,"theme":"Metiers Commencant par M","score1":-1,"score2":-1},{"id_match":8,"id_manche":4,"theme":"Fruits Jaunes","score1":-1,"score2":-1},{"id_match":8,"id_manche":5,"theme":"Sports avec une Balle","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":9,"tour":"Achrafe","parties":[{"id_match":9,"id_manche":1,"theme":"RacesChiens","score1":-1,"score2":-1},{"id_match":9,"id_manche":2,"theme":"Personnages de la Bible","score1":-1,"score2":-1},{"id_match":9,"id_manche":3,"theme":"Choses Indispensables en Vacances","score1":-1,"score2":-1},{"id_match":9,"id_manche":4,"theme":"Sports avec une Balle","score1":-1,"score2":-1},{"id_match":9,"id_manche":5,"theme":"Langues","score1":-1,"score2":-1}]},{"joueur1":"Achrafe","joueur2":"Mathis","score1":0,"score2":0,"id_match":10,"tour":"Achrafe","parties":[{"id_match":10,"id_manche":1,"theme":"Pays commencant par P","score1":-1,"score2":-1},{"id_match":10,"id_manche":2,"theme":"Composants d'Ordinateurs","score1":-1,"score2":-1},{"id_match":10,"id_manche":3,"theme":"Personnages de la Bible","score1":-1,"score2":-1},{"id_match":10,"id_manche":4,"theme":"Metiers Commencant par M","score1":-1,"score2":-1},{"id_match":10,"id_manche":5,"theme":"Verbes pour les Sons d'Animaux","score1":-1,"score2":-1}]}]}
+=======
+{
+    "matches": [
+        {
+            "joueur1": "Mathis",
+            "joueur2": "Achrafe",
+            "score1": 0,
+            "score2": 0,
+            "id_match": 1,
+            "tour": "Achrafe",
+            "parties": [
+                {
+                    "id_match": 1,
+                    "id_manche": 1,
+                    "theme": "Metiers Commencant par M",
+                    "score1": 6,
+                    "score2": 0
+                },
+                {
+                    "id_match": 1,
+                    "id_manche": 2,
+                    "theme": "Synonymes de Petit",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 1,
+                    "id_manche": 3,
+                    "theme": "Films de Spielberg",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 1,
+                    "id_manche": 4,
+                    "theme": "Fruits Jaunes",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 1,
+                    "id_manche": 5,
+                    "theme": "Composants d'Ordinateurs",
+                    "score1": -1,
+                    "score2": -1
+                }
+            ]
+        },
+        {
+            "joueur1": "Mathis",
+            "joueur2": "Adele",
+            "score1": 0,
+            "score2": 0,
+            "id_match": 2,
+            "tour": "Adele",
+            "parties": [
+                {
+                    "id_match": 2,
+                    "id_manche": 1,
+                    "theme": "Choses Indispensables en Vacances",
+                    "score1": 0,
+                    "score2": 3
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 2,
+                    "theme": "Verbes pour les Sons d'Animaux",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 3,
+                    "theme": "Composants d'Ordinateurs",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 4,
+                    "theme": "RacesChiens",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 5,
+                    "theme": "Synonymes de Petit",
+                    "score1": -1,
+                    "score2": -1
+                }
+            ]
+        }
+    ]
+}
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370

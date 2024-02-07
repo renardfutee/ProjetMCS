@@ -215,18 +215,17 @@ void verifUser(rep_t * rep, char * adv)
 
 void listerPartieMonTour(rep_t * rep, reqSimple_t req)
 {
-	//TODO récuperer toutes les parties ou le tour = pseudo dans une seule chaine de caractère ==> "5_Agathe:1-5; 6_Achraf:2-6;" 
+	char * chaine = fetchAllPartiesIfTurn(req.msg);
 	printf("---> L'utilisateur '%s' souhaite lister les parties ou c'est sont tour\n", req.msg); 
 	
 	rep->nb = 1; 
-	strcpy(rep->msg, "5_Agathe:1-5; 6_Achraf:2-6;"); 
+	strcpy(rep->msg, chaine); 
 }
 
 void getProchaineManche(rep_t * rep, reqSimple_t req)
 {
 	int manche = nextManche(atoi(req.msg));
 
-	// TODO retourner le numéro de la prochaine manche à faire (ou 0 si le jeu est terminé) 
 	printf("---> Récuperer le numéro de la prochaine manche de la partie %d\n", atoi(req.msg)); 
 	rep->nb = 1; 
 	
@@ -236,10 +235,22 @@ void getProchaineManche(rep_t * rep, reqSimple_t req)
 	strcpy(rep->msg, " "); 
 }
 
+<<<<<<< HEAD
 void listerPartieLeurTour(rep_t * rep, reqSimple_t req)
 {
 	//TODO récuperer toutes les parties ou le tour = pseudo dans une seule chaine de caractère ==> "5_Agathe:1-5; 6_Achraf:2-6;" 
 	printf("---> L'utilisateur '%s' souhaite lister les parties ou c'est le tour de l'adversaire\n", req.msg); 
+=======
+void changerTour(rep_t * rep, reqSimple_t req)
+{	
+	reqComplete_t reqComplete; 
+
+	deSerialComplete(&reqComplete, &req);
+
+	// TODO fonction qui change le tour de la partie (met fin si c'était la dernière manche)
+	
+	changementTour(atoi(reqComplete.msg2), 1);
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370
 	
 	rep->nb = 1; 
 	strcpy(rep->msg, "5_Agathe:1-5; 6_Achraf:2-6;"); 
@@ -261,7 +272,6 @@ void lancerPartie(rep_t * rep, reqSimple_t req)
 	char chaineId[MAX_BUFF]; 
 	reqComplete_t reqComplete; 
 
-	// TODO récuperer le numéro de la partie 
 	deSerialComplete(&reqComplete, &req);
 	printf("---> Lancement de partie entre les utilisateur %s et %s\n", reqComplete.msg, reqComplete.msg2);  
 	idPartie = creategame(reqComplete.msg, reqComplete.msg2);
@@ -275,8 +285,12 @@ void verif_jouer(rep_t * rep, reqSimple_t req)
 	int result; 
 	char chaine[MAX_BUFF]; 
 	reqComplete_t reqComplete; 
+<<<<<<< HEAD
 
 	// TODO result = fonction qui vérifie si c'est un bien à mon tour de jouer
+=======
+    // TODO
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370
 	printf("Debut de la fonciton verif\n"); 
 	deSerialComplete(&reqComplete, &req);
 	printf("%d--->L'utilisateur %s souhaite jouer à la partie d'identifiant %d  ", req.nb, reqComplete.msg, atoi(reqComplete.msg2)); 
@@ -364,9 +378,39 @@ void getReponse(rep_t * rep, reqSimple_t req)
 	printf("---> Verification de réponse\n");
 	//TODO Modifier le score du joueur qui a joué et récuperer le score obtenu grace à CETTE réponse
 	rep->nb = 1; 
+<<<<<<< HEAD
 	//strcpy(points, mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse));
 	strcpy(points, "3"); 
 	printf("-----> %s\n", points); 
+=======
+	int score = mettreAJourScore(reqRep.idPartie, reqRep.idManche, reqRep.user, reqRep.reponse);
+	if(score == -1){
+		strcpy(rep->msg, "0");
+	}
+	else if(score == 1){
+		printf("Score == 1\n");
+		strcpy(rep->msg, "1");
+	}
+	else if(score == 2){
+		strcpy(rep->msg, "2");
+	}
+	else if(score == 3){
+		strcpy(rep->msg, "3");
+	}
+	else {
+		strcpy(rep->msg, "0");
+	}
+	printf(" rep msg   %s", rep->msg);
+	printf("\n");
+	printf(" score !! -----%d ----", score);
+	//strcpy(rep->msg, );
+	// strcpy(rep->msg, " ");
+}
+
+rep_t receiveReponse(sock_t sd)
+{
+	rep_t rep; 	
+>>>>>>> e81fe161a3ea2552f65b156d39b55bbc96d99370
 	
 	if ((atoi(points) <= 0))
 		strcpy(rep->msg, "0");
