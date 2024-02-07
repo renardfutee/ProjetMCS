@@ -86,3 +86,30 @@ int verifGame(const char* connected_pseudo, int id_match);
  * @return int 
  */
 int nextManche(int id_match);
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @param id_match 
+ * @param id_manche 
+ * @return char* 
+ */
+char *scoreGame(const char *connected_pseudo, int id_match, int id_manche);
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @param id_match 
+ * @return char* 
+ */
+char *scorePartie(const char *connected_pseudo, int id_match);
+
+/**
+ * @brief 
+ * 
+ * @param connected_pseudo 
+ * @return char* 
+ */
+char *fetchAllParties(const char *connected_pseudo);

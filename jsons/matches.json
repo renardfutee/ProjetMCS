@@ -12,14 +12,14 @@
                     "id_match": 1,
                     "id_manche": 1,
                     "theme": "Films de Spielberg",
-                    "score1": -1,
+                    "score1": 10,
                     "score2": -1
                 },
                 {
                     "id_match": 1,
                     "id_manche": 2,
                     "theme": "Joueurs de l'EDF",
-                    "score1": -1,
+                    "score1": 22,
                     "score2": -1
                 },
                 {
@@ -27,7 +27,7 @@
                     "id_manche": 3,
                     "theme": "Fruits Jaunes",
                     "score1": -1,
-                    "score2": -1
+                    "score2": 33
                 },
                 {
                     "id_match": 1,
@@ -40,6 +40,51 @@
                     "id_match": 1,
                     "id_manche": 5,
                     "theme": "Choses Indispensables en Vacances",
+                    "score1": -1,
+                    "score2": -1
+                }
+            ]
+        },
+        {
+            "joueur1": "Arthur",
+            "joueur2": "Achrafe",
+            "score1": 0,
+            "score2": 0,
+            "id_match": 2,
+            "tour": "Arthur",
+            "parties": [
+                {
+                    "id_match": 2,
+                    "id_manche": 1,
+                    "theme": "Choses Indispensables en Vacances",
+                    "score1": 0,
+                    "score2": -1
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 2,
+                    "theme": "Joueurs de l'EDF",
+                    "score1": 22,
+                    "score2": -1
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 3,
+                    "theme": "Personnages de la Bible",
+                    "score1": -1,
+                    "score2": 33
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 4,
+                    "theme": "RacesChiens",
+                    "score1": -1,
+                    "score2": 44
+                },
+                {
+                    "id_match": 2,
+                    "id_manche": 5,
+                    "theme": "Sports avec une Balle",
                     "score1": -1,
                     "score2": -1
                 }

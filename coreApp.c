@@ -8,6 +8,7 @@
 #include "coreApp.h"
 
 #define MAX_PSEUDO_LENGTH 50
+#define BUFFER_SIZE 256
 
 // Fonction pour supprimer les accents et convertir en minuscules
 void removeAccentsAndUppercase(char *str)
@@ -531,7 +532,7 @@ int creategame(const char *connected_pseudo, const char *recherchePseudo)
     json_array_append_new(matches_array, new_match);
 
     // Enregistrement des modifications dans le fichier
-    json_dump_file(root, "jsons/matches.json", JSON_INDENT(4));
+    json_dump_file(root, "jsons/matches.json", JSON_COMPACT);
 
     // Récupération de l'ID du match créé
     int id_match = json_array_size(matches_array);
@@ -681,31 +682,36 @@ char *RecupTheme(int id_match, int id_manche)
 }
 
 // Fonction pour mettre à jour le score
-char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot) {
+char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const char *mot)
+{
     // Récupérer le thème
     const char *theme = RecupTheme(id_match, id_manche);
-    if (theme == NULL) {
+    if (theme == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible de récupérer le thème.\n");
         return "-1";
     }
 
     // Récupérer le score pour l'instant
     int score = chercherMotDansJSON(theme, mot);
-    if (score == -1) {
+    if (score == -1)
+    {
         fprintf(stderr, "Erreur : Impossible de récupérer le score.\n");
         return "-1";
     }
 
     // Ouvrir et lire le fichier JSON
     FILE *fichier = fopen("jsons/matches.json", "r+");
-    if (fichier == NULL) {
+    if (fichier == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
         return "-1";
     }
 
     json_error_t error;
     json_t *root = json_loadf(fichier, 0, &error);
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         fclose(fichier);
         return "-1";
@@ -713,7 +719,8 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
 
     // Recherche du match correspondant
     json_t *matches = json_object_get(root, "matches");
-    if (!json_is_array(matches)) {
+    if (!json_is_array(matches))
+    {
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         fclose(fichier);
         json_decref(root);
@@ -721,11 +728,13 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
     }
 
     int i;
-    for (i = 0; i < json_array_size(matches); i++) {
+    for (i = 0; i < json_array_size(matches); i++)
+    {
         json_t *match = json_array_get(matches, i);
         // Recherche de la manche correspondante
         json_t *parties = json_object_get(match, "parties");
-        if (!json_is_array(parties)) {
+        if (!json_is_array(parties))
+        {
             fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
             fclose(fichier);
             json_decref(root);
@@ -733,27 +742,36 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
         }
 
         int j;
-        for (j = 0; j < json_array_size(parties); j++) {
+        for (j = 0; j < json_array_size(parties); j++)
+        {
             json_t *partie = json_array_get(parties, j);
             json_t *id_match_json = json_object_get(partie, "id_match");
             json_t *id_manche_json = json_object_get(partie, "id_manche");
-            if (json_integer_value(id_manche_json) == id_manche && json_integer_value(id_match_json) == id_match) {
+            if (json_integer_value(id_manche_json) == id_manche && json_integer_value(id_match_json) == id_match)
+            {
                 // Mettre à jour le score pour le pseudo donné
                 json_t *score1 = json_object_get(partie, "score1");
                 json_t *score2 = json_object_get(partie, "score2");
 
                 // Mettre à jour le score approprié selon le pseudo
-                if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur1"))) == 0) {
-                    if(json_integer_value(score1) == -1){
+                if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur1"))) == 0)
+                {
+                    if (json_integer_value(score1) == -1)
+                    {
                         json_integer_set(score1, 0);
                     }
                     json_integer_set(score1, json_integer_value(score1) + score); // Ajout du score
-                } else if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur2"))) == 0) {
-                    if(json_integer_value(score2) == -1){
+                }
+                else if (strcmp(pseudo, json_string_value(json_object_get(match, "joueur2"))) == 0)
+                {
+                    if (json_integer_value(score2) == -1)
+                    {
                         json_integer_set(score2, 0);
                     }
                     json_integer_set(score2, json_integer_value(score2) + score); // Ajout du score
-                } else {
+                }
+                else
+                {
                     fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
                     fclose(fichier);
                     json_decref(root);
@@ -762,13 +780,14 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
 
                 // Enregistrement des modifications dans le fichier JSON
                 fseek(fichier, 0, SEEK_SET);
-                json_dumpf(root, fichier, JSON_INDENT(4));
+                json_dumpf(root, fichier, JSON_COMPACT);
                 fclose(fichier);
                 json_decref(root);
 
                 // Convertir le score mis à jour en une chaîne de caractères
                 char *score_string = malloc(sizeof(char) * 10); // Assez grand pour contenir des nombres jusqu'à 9 chiffres
-                if (score_string == NULL) {
+                if (score_string == NULL)
+                {
                     fprintf(stderr, "Erreur : Impossible d'allouer de la mémoire.\n");
                     return "-1";
                 }
@@ -785,10 +804,12 @@ char *mettreAJourScore(int id_match, int id_manche, const char *pseudo, const ch
 }
 
 // Fonction pour récupérer l'adversaire du joueur pour une partie donnée
-char *getAdversaire(const char *connected_pseudo, int id_match) {
+char *getAdversaire(const char *connected_pseudo, int id_match)
+{
     // Ouvrir et lire le fichier JSON
     FILE *fichier = fopen("jsons/matches.json", "r");
-    if (fichier == NULL) {
+    if (fichier == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
         return NULL;
     }
@@ -797,52 +818,64 @@ char *getAdversaire(const char *connected_pseudo, int id_match) {
     json_t *root = json_loadf(fichier, 0, &error);
     fclose(fichier);
 
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         return NULL;
     }
 
     // Recherche du match correspondant
     json_t *matches = json_object_get(root, "matches");
-    if (!json_is_array(matches)) {
+    if (!json_is_array(matches))
+    {
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         json_decref(root);
         return NULL;
     }
 
     int i;
-    for (i = 0; i < json_array_size(matches); i++) {
+    for (i = 0; i < json_array_size(matches); i++)
+    {
         json_t *match = json_array_get(matches, i);
         // Recherche de la partie correspondante
         json_t *parties = json_object_get(match, "parties");
-        if (!json_is_array(parties)) {
+        if (!json_is_array(parties))
+        {
             fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
             json_decref(root);
             return NULL;
         }
 
         int j;
-        for (j = 0; j < json_array_size(parties); j++) {
+        for (j = 0; j < json_array_size(parties); j++)
+        {
             json_t *partie = json_array_get(parties, j);
             json_t *idPartie_json = json_object_get(partie, "id_manche");
-            if (!json_is_integer(idPartie_json)) {
+            if (!json_is_integer(idPartie_json))
+            {
                 fprintf(stderr, "Erreur : \"id_manche\" n'est pas un entier JSON.\n");
                 continue;
             }
 
-            if (json_integer_value(idPartie_json) == id_match) {
+            if (json_integer_value(idPartie_json) == id_match)
+            {
                 const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
                 const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
 
-                if (strcmp(connected_pseudo, joueur1) == 0) {
+                if (strcmp(connected_pseudo, joueur1) == 0)
+                {
                     char *adversaire = strdup(joueur2);
                     json_decref(root);
                     return adversaire;
-                } else if (strcmp(connected_pseudo, joueur2) == 0) {
+                }
+                else if (strcmp(connected_pseudo, joueur2) == 0)
+                {
                     char *adversaire = strdup(joueur1);
                     json_decref(root);
                     return adversaire;
-                } else {
+                }
+                else
+                {
                     fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
                     json_decref(root);
                     return NULL;
@@ -856,10 +889,12 @@ char *getAdversaire(const char *connected_pseudo, int id_match) {
 }
 
 // Fonction pour changer le tour de la partie et vérifier si la partie est terminée
-int changementTour(int id_match, int id_manche) {
+int changementTour(int id_match, int id_manche)
+{
     // Ouvrir et lire le fichier JSON
     FILE *fichier = fopen("jsons/matches.json", "r+");
-    if (fichier == NULL) {
+    if (fichier == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
         return -1;
     }
@@ -867,7 +902,8 @@ int changementTour(int id_match, int id_manche) {
     // Charger le contenu JSON en mémoire
     json_error_t error;
     json_t *root = json_loadf(fichier, 0, &error);
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         fclose(fichier);
         return -1;
@@ -878,7 +914,8 @@ int changementTour(int id_match, int id_manche) {
 
     // Recherche du match correspondant
     json_t *matches = json_object_get(root, "matches");
-    if (!json_is_array(matches)) {
+    if (!json_is_array(matches))
+    {
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         json_decref(root);
         return -1;
@@ -886,18 +923,22 @@ int changementTour(int id_match, int id_manche) {
 
     // Parcourir les matches
     int i;
-    for (i = 0; i < json_array_size(matches); i++) {
+    for (i = 0; i < json_array_size(matches); i++)
+    {
         json_t *match = json_array_get(matches, i);
         json_t *id_match_json = json_object_get(match, "id_match");
-        if (!json_is_integer(id_match_json)) {
+        if (!json_is_integer(id_match_json))
+        {
             fprintf(stderr, "Erreur : \"id_match\" n'est pas un entier JSON.\n");
             continue;
         }
 
-        if (json_integer_value(id_match_json) == id_match) {
+        if (json_integer_value(id_match_json) == id_match)
+        {
             // Recherche de la partie correspondante
             json_t *parties = json_object_get(match, "parties");
-            if (!json_is_array(parties)) {
+            if (!json_is_array(parties))
+            {
                 fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
                 json_decref(root);
                 return -1;
@@ -905,33 +946,44 @@ int changementTour(int id_match, int id_manche) {
 
             // Parcourir les parties
             int j;
-            for (j = 0; j < json_array_size(parties); j++) {
+            for (j = 0; j < json_array_size(parties); j++)
+            {
                 json_t *partie = json_array_get(parties, j);
                 json_t *id_manche_json = json_object_get(partie, "id_manche");
-                if (!json_is_integer(id_manche_json)) {
+                if (!json_is_integer(id_manche_json))
+                {
                     fprintf(stderr, "Erreur : \"id_manche\" n'est pas un entier JSON.\n");
                     continue;
                 }
 
-                if (json_integer_value(id_manche_json) == id_manche) {
+                if (json_integer_value(id_manche_json) == id_manche)
+                {
                     // Vérifier si c'est la dernière manche
-                    if (j == json_array_size(parties) - 1) {
+                    if (j == json_array_size(parties) - 1)
+                    {
                         // Si c'est la dernière manche, mettre "FINI" comme tour
                         json_t *tour = json_object_get(match, "tour");
                         json_string_set(tour, "FINI");
-                    } else {
+                    }
+                    else
+                    {
                         // Sinon, mettre le nom de l'adversaire comme tour
                         const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
                         const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
                         const char *connected_pseudo = json_string_value(json_object_get(match, "tour"));
 
-                        if (strcmp(connected_pseudo, joueur1) == 0) {
+                        if (strcmp(connected_pseudo, joueur1) == 0)
+                        {
                             json_t *tour = json_object_get(match, "tour");
                             json_string_set(tour, joueur2);
-                        } else if (strcmp(connected_pseudo, joueur2) == 0) {
+                        }
+                        else if (strcmp(connected_pseudo, joueur2) == 0)
+                        {
                             json_t *tour = json_object_get(match, "tour");
                             json_string_set(tour, joueur1);
-                        } else {
+                        }
+                        else
+                        {
                             fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
                             json_decref(root);
                             return -1;
@@ -940,7 +992,8 @@ int changementTour(int id_match, int id_manche) {
 
                     // Enregistrement des modifications dans le fichier JSON
                     FILE *fichier = fopen("jsons/matches.json", "w");
-                    if (fichier == NULL) {
+                    if (fichier == NULL)
+                    {
                         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON pour écriture.\n");
                         json_decref(root);
                         return -1;
@@ -964,10 +1017,12 @@ int changementTour(int id_match, int id_manche) {
 }
 
 // Fonction pour vérifier que l'identifiant de la partie existe déjà et que c'est bien le tour du joueur
-int verifGame(const char* connected_pseudo, int id_match) {
+int verifGame(const char *connected_pseudo, int id_match)
+{
     // Ouvrir et lire le fichier JSON
     FILE *fichier = fopen("jsons/matches.json", "r");
-    if (fichier == NULL) {
+    if (fichier == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
         return -1;
     }
@@ -975,7 +1030,8 @@ int verifGame(const char* connected_pseudo, int id_match) {
     // Charger le contenu JSON en mémoire
     json_error_t error;
     json_t *root = json_loadf(fichier, 0, &error);
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         fclose(fichier);
         return -1;
@@ -986,7 +1042,8 @@ int verifGame(const char* connected_pseudo, int id_match) {
 
     // Recherche du match correspondant
     json_t *matches = json_object_get(root, "matches");
-    if (!json_is_array(matches)) {
+    if (!json_is_array(matches))
+    {
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         json_decref(root);
         return -1;
@@ -994,21 +1051,27 @@ int verifGame(const char* connected_pseudo, int id_match) {
 
     // Parcourir les matches
     int i;
-    for (i = 0; i < json_array_size(matches); i++) {
+    for (i = 0; i < json_array_size(matches); i++)
+    {
         json_t *match = json_array_get(matches, i);
         json_t *id_match_json = json_object_get(match, "id_match");
-        if (!json_is_integer(id_match_json)) {
+        if (!json_is_integer(id_match_json))
+        {
             fprintf(stderr, "Erreur : \"id_match\" n'est pas un entier JSON.\n");
             continue;
         }
 
-        if (json_integer_value(id_match_json) == id_match) {
+        if (json_integer_value(id_match_json) == id_match)
+        {
             // Vérifier si c'est bien le tour du joueur
             const char *tour = json_string_value(json_object_get(match, "tour"));
-            if (strcmp(tour, connected_pseudo) == 0) {
+            if (strcmp(tour, connected_pseudo) == 0)
+            {
                 json_decref(root);
                 return 1; // C'est bien le tour du joueur
-            } else {
+            }
+            else
+            {
                 json_decref(root);
                 return -1; // Ce n'est pas le tour du joueur
             }
@@ -1021,10 +1084,12 @@ int verifGame(const char* connected_pseudo, int id_match) {
 }
 
 // Fonction pour obtenir la prochaine manche à jouer
-int nextManche(int id_match) {
+int nextManche(int id_match)
+{
     // Ouvrir et lire le fichier JSON
     FILE *fichier = fopen("jsons/matches.json", "r");
-    if (fichier == NULL) {
+    if (fichier == NULL)
+    {
         fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
         return -1;
     }
@@ -1032,7 +1097,8 @@ int nextManche(int id_match) {
     // Charger le contenu JSON en mémoire
     json_error_t error;
     json_t *root = json_loadf(fichier, 0, &error);
-    if (!root) {
+    if (!root)
+    {
         fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
         fclose(fichier);
         return -1;
@@ -1043,7 +1109,8 @@ int nextManche(int id_match) {
 
     // Recherche du match correspondant
     json_t *matches = json_object_get(root, "matches");
-    if (!json_is_array(matches)) {
+    if (!json_is_array(matches))
+    {
         fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
         json_decref(root);
         return -1;
@@ -1051,18 +1118,22 @@ int nextManche(int id_match) {
 
     // Parcourir les matches
     int i;
-    for (i = 0; i < json_array_size(matches); i++) {
+    for (i = 0; i < json_array_size(matches); i++)
+    {
         json_t *match = json_array_get(matches, i);
         json_t *id_match_json = json_object_get(match, "id_match");
-        if (!json_is_integer(id_match_json)) {
+        if (!json_is_integer(id_match_json))
+        {
             fprintf(stderr, "Erreur : \"id_match\" n'est pas un entier JSON.\n");
             continue;
         }
 
-        if (json_integer_value(id_match_json) == id_match) {
+        if (json_integer_value(id_match_json) == id_match)
+        {
             // Recherche de la prochaine manche non jouée
             json_t *parties = json_object_get(match, "parties");
-            if (!json_is_array(parties)) {
+            if (!json_is_array(parties))
+            {
                 fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
                 json_decref(root);
                 return -1;
@@ -1070,13 +1141,15 @@ int nextManche(int id_match) {
 
             // Parcourir les parties pour trouver la prochaine manche non jouée
             int j;
-            for (j = 0; j < json_array_size(parties); j++) {
+            for (j = 0; j < json_array_size(parties); j++)
+            {
                 json_t *partie = json_array_get(parties, j);
                 json_t *score1 = json_object_get(partie, "score1");
                 json_t *score2 = json_object_get(partie, "score2");
 
                 // Si le score est -1, alors la manche n'a pas encore été jouée
-                if (json_integer_value(score1) == -1 || json_integer_value(score2) == -1) {
+                if (json_integer_value(score1) == -1 || json_integer_value(score2) == -1)
+                {
                     json_decref(root);
                     return j + 1; // La prochaine manche à jouer est la manche suivante non jouée
                 }
@@ -1093,18 +1166,318 @@ int nextManche(int id_match) {
     return -1;
 }
 
+// Fonction pour récupérer le score du match de la partie
+char *scoreGame(const char *connected_pseudo, int id_match, int id_manche)
+{
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r");
+    if (fichier == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return NULL;
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    fclose(fichier);
+
+    if (!root)
+    {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        return NULL;
+    }
+
+    // Recherche du match correspondant
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches))
+    {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    // Parcourir les matchs
+    for (size_t i = 0; i < json_array_size(matches); i++)
+    {
+        json_t *match = json_array_get(matches, i);
+        json_t *id_match_json = json_object_get(match, "id_match");
+
+        if (json_integer_value(id_match_json) == id_match)
+        {
+            // Recherche de la partie correspondante dans le match
+            json_t *parties = json_object_get(match, "parties");
+            if (!json_is_array(parties))
+            {
+                fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+                json_decref(root);
+                return NULL;
+            }
+
+            // Parcourir les parties
+            for (size_t j = 0; j < json_array_size(parties); j++)
+            {
+                json_t *partie = json_array_get(parties, j);
+                json_t *id_manche_json = json_object_get(partie, "id_manche");
+
+                if (json_integer_value(id_manche_json) == id_manche)
+                {
+                    // Vérifier si le pseudo connecté est le joueur 1 ou le joueur 2
+                    const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
+                    const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
+                    int score1 = json_integer_value(json_object_get(partie, "score1"));
+                    int score2 = json_integer_value(json_object_get(partie, "score2"));
+
+                    // Construire et retourner le score sous forme de chaîne de caractères
+                    if (strcmp(connected_pseudo, joueur1) == 0)
+                    {
+                        char *score = malloc(sizeof(char) * 20); // Taille suffisante pour stocker le score
+                        sprintf(score, "%d:%d", score1, score2);
+                        json_decref(root);
+                        return score;
+                    }
+                    else if (strcmp(connected_pseudo, joueur2) == 0)
+                    {
+                        char *score = malloc(sizeof(char) * 20); // Taille suffisante pour stocker le score
+                        sprintf(score, "%d:%d", score2, score1);
+                        json_decref(root);
+                        return score;
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Erreur : Pseudo non trouvé dans le match.\n");
+                        json_decref(root);
+                        return NULL;
+                    }
+                }
+            }
+            fprintf(stderr, "Erreur : ID de manche non trouvé dans le match.\n");
+            json_decref(root);
+            return NULL;
+        }
+    }
+    fprintf(stderr, "Erreur : ID de match non trouvé dans le fichier JSON.\n");
+    json_decref(root);
+    return NULL;
+}
+
+// Fonction pour récupérer le score de la partie
+char *scorePartie(const char *connected_pseudo, int id_match)
+{
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r");
+    if (fichier == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return NULL;
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    fclose(fichier);
+
+    if (!root)
+    {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        return NULL;
+    }
+
+    // Recherche du match correspondant
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches))
+    {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        json_decref(root);
+        return NULL;
+    }
+
+    char *score = malloc(100 * sizeof(char)); // Allocation de mémoire pour stocker le score
+    if (score == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation mémoire.\n");
+        json_decref(root);
+        return NULL;
+    }
+    strcpy(score, ""); // Initialisation du score à une chaîne vide
+
+    int score_J = 0;
+    int score_A = 0;
+    int choix = 0;
+    int i;
+    for (i = 0; i < json_array_size(matches); i++)
+    {
+        json_t *match = json_array_get(matches, i);
+        json_t *id_match_json = json_object_get(match, "id_match");
+        if (json_integer_value(id_match_json) == id_match)
+        {
+            // Récupération des informations du match
+            const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
+            const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
+
+            // Recherche des parties correspondantes
+            json_t *parties = json_object_get(match, "parties");
+            if (!json_is_array(parties))
+            {
+                fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+                json_decref(root);
+                free(score);
+                return NULL;
+            }
+
+            for (int j = 0; j < json_array_size(parties); j++)
+            {
+                json_t *partie = json_array_get(parties, j);
+                int score_joueur = json_integer_value(json_object_get(partie, "score1"));
+                int score_adversaire = json_integer_value(json_object_get(partie, "score2"));
+
+                if (score_joueur != -1)
+                {
+                    score_J += score_joueur;
+                }
+                // Addition des scores de chaque partie
+                if (score_adversaire != -1)
+                {
+                    score_A += score_adversaire;
+                }
+            }
+
+            // Construction de la chaîne de caractères représentant le score total du match
+            sprintf(score, "%d-%d",
+                    (strcmp(connected_pseudo, joueur1) == 0) ? score_J : score_A,
+                    (strcmp(connected_pseudo, joueur1) == 0) ? score_A : score_J);
+
+            json_decref(root);
+            return score;
+        }
+    }
+    fprintf(stderr, "Erreur : ID de match non trouvé dans le fichier JSON.\n");
+    json_decref(root);
+    free(score);
+    return NULL;
+}
+
+// Fonction pour l'historique de toutes les parties
+char *fetchAllParties(const char *connected_pseudo)
+{
+    // Ouvrir et lire le fichier JSON
+    FILE *fichier = fopen("jsons/matches.json", "r");
+    if (fichier == NULL)
+    {
+        fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier JSON.\n");
+        return NULL;
+    }
+
+    json_error_t error;
+    json_t *root = json_loadf(fichier, 0, &error);
+    fclose(fichier);
+
+    if (!root)
+    {
+        fprintf(stderr, "Erreur : Impossible de charger le fichier JSON (%s)\n", error.text);
+        return NULL;
+    }
+
+    // Chaîne pour stocker l'historique des parties
+    char *historique = malloc(100 * sizeof(char));
+    if (historique == NULL)
+    {
+        fprintf(stderr, "Erreur d'allocation mémoire.\n");
+        json_decref(root);
+        return NULL;
+    }
+    strcpy(historique, ""); // Initialisation à une chaîne vide
+
+    json_t *matches = json_object_get(root, "matches");
+    if (!json_is_array(matches))
+    {
+        fprintf(stderr, "Erreur : \"matches\" n'est pas un tableau JSON.\n");
+        json_decref(root);
+        free(historique);
+        return NULL;
+    }
+
+    for (int i = 0; i < json_array_size(matches); i++)
+    {
+        json_t *match = json_array_get(matches, i);
+        const char *joueur1 = json_string_value(json_object_get(match, "joueur1"));
+        const char *joueur2 = json_string_value(json_object_get(match, "joueur2"));
+
+        // Vérifier si le joueur connecté est impliqué dans ce match
+        if (strcmp(connected_pseudo, joueur1) == 0 || strcmp(connected_pseudo, joueur2) == 0)
+        {
+            // Récupérer l'ID du match
+            int id_match = json_integer_value(json_object_get(match, "id_match"));
+
+            // Rechercher les parties correspondantes
+            json_t *parties = json_object_get(match, "parties");
+            if (!json_is_array(parties))
+            {
+                fprintf(stderr, "Erreur : \"parties\" n'est pas un tableau JSON.\n");
+                json_decref(root);
+                free(historique);
+                return NULL;
+            }
+
+            int score_J = 0;
+            int score_A = 0;
+            for (int j = 0; j < json_array_size(parties); j++)
+            {
+                json_t *partie = json_array_get(parties, j);
+                int score_joueur = json_integer_value(json_object_get(partie, "score1"));
+                int score_adversaire = json_integer_value(json_object_get(partie, "score2"));
+
+                if (strcmp(connected_pseudo, joueur1) == 0)
+                {
+                    // Si le joueur connecté est joueur 1
+                    if(score_joueur != -1)
+                    {
+                        score_J += score_joueur;
+                    }
+                    if(score_adversaire != -1)
+                    {
+                        score_A += score_adversaire;
+                    }
+                }
+                else
+                {
+                    // Si le joueur connecté est joueur 2
+                    if(score_joueur != -1)
+                    {
+                        score_J += score_adversaire;
+                    }
+                    if(score_adversaire != -1)
+                    {
+                        score_A += score_joueur;
+                    }
+                    
+                }
+            }
+
+            // Ajouter l'entrée dans l'historique
+            sprintf(historique + strlen(historique), "%d_%s:%d-%d; ", id_match, (strcmp(connected_pseudo, joueur1) == 0) ? joueur2 : joueur1,
+                    score_J, score_A);
+        }
+    }
+
+    json_decref(root);
+    return historique;
+}
+
 /////////////////////////////////////////////////////////////////////////////// FONCTIONS (POUR ADELE) ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
 
-int main() {
+int main()
+{
     int choix;
     char pseudo[20];
     char recherchePseudo[20];
     int id_match;
     int id_manche;
+    const char *connected_pseudo;
+    char *score;
 
-    do {
+    do
+    {
         // Affichage du menu
         printf("\nMenu :\n");
         printf("1. Connexion\n");
@@ -1116,86 +1489,139 @@ int main() {
         printf("7. Changer le tour de la partie\n");
         printf("8. Vérifier le tour de jeu\n");
         printf("9. Récupérer la prochaine manche\n");
+        printf("10. Récupérer le score de la manche\n");
+        printf("11. Récupérer le score de la partie\n");
+        printf("12. Historique de toutes les parties\n");
         printf("0. Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
 
         // Actions selon le choix
-        switch (choix) {
-            case 1:
-                printf("Entrez votre pseudo : ");
-                scanf("%s", pseudo);
-                if (connexion(pseudo) == 1) {
-                    printf("Connexion réussie pour le pseudo : %s\n", pseudo);
-                } else {
-                    printf("Échec de connexion pour le pseudo : %s\n", pseudo);
-                }
-                break;
-            case 2:
-                printf("Thème aléatoire : %s\n", findRandomTheme());
-                break;
-            case 3:
-                printf("Entrez votre pseudo : ");
-                scanf("%s", pseudo);
-                printf("Entrez le pseudo recherché : ");
-                scanf("%s", recherchePseudo);
-                id_match = creategame(pseudo, recherchePseudo);
-                if (id_match != -1) {
-                    printf("Partie créée avec succès (ID du match : %d)\n", id_match);
-                } else {
-                    printf("Échec de création de partie.\n");
-                }
-                break;
-            case 4:
-                printf("Entrez votre pseudo : ");
-                scanf("%s", pseudo);
-                printf("Liste des joueurs :\n");
-                char ** joueurs = fetchAllPlayers(pseudo);
-                for (int i = 0; joueurs[i] != NULL; i++) {
-                    printf("%s\n", joueurs[i]);
-                    free(joueurs[i]);
-                }
-                free(joueurs);
-                break;
-            case 5:
-                printf("Entrez l'ID du match : ");
-                scanf("%d", &id_match);
-                printf("Entrez l'ID de la manche : ");
-                scanf("%d", &id_manche);
-                printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, RecupTheme(id_match, id_manche));
-                break;
-            case 6:
-                printf("Entrez votre pseudo : ");
-                scanf("%s", pseudo);
-                printf("Entrez l'ID de la partie : ");
-                scanf("%d", &id_match);
-                printf("Adversaire de %s pour la partie %d : %s\n", pseudo, id_match, getAdversaire(pseudo, id_match));
-                break;
-            case 7:
-                printf("Entrez l'ID du match : ");
-                scanf("%d", &id_match);
-                printf("Entrez l'ID de la manche : ");
-                scanf("%d", &id_manche);
-                printf("Résultat du changement de tour : %d\n", changementTour(id_match, id_manche));
-                break;
-            case 8:
-                printf("Entrez votre pseudo : ");
-                scanf("%s", pseudo);
-                printf("Entrez l'ID du match : ");
-                scanf("%d", &id_match);
-                printf("Résultat de la vérification du tour : %d\n", verifGame(pseudo, id_match));
-                break;
-            case 9:
-                printf("Entrez l'ID du match : ");
-                scanf("%d", &id_match);
-                printf("Prochaine manche : %d\n", nextManche(id_match));
-                break;
-            case 0:
-                printf("Au revoir !\n");
-                break;
-            default:
-                printf("Choix invalide. Veuillez choisir une option valide.\n");
-                break;
+        switch (choix)
+        {
+        case 1:
+            printf("Entrez votre pseudo : ");
+            scanf("%s", pseudo);
+            if (connexion(pseudo) == 1)
+            {
+                printf("Connexion réussie pour le pseudo : %s\n", pseudo);
+            }
+            else
+            {
+                printf("Échec de connexion pour le pseudo : %s\n", pseudo);
+            }
+            break;
+        case 2:
+            printf("Thème aléatoire : %s\n", findRandomTheme());
+            break;
+        case 3:
+            printf("Entrez votre pseudo : ");
+            scanf("%s", pseudo);
+            printf("Entrez le pseudo recherché : ");
+            scanf("%s", recherchePseudo);
+            id_match = creategame(pseudo, recherchePseudo);
+            if (id_match != -1)
+            {
+                printf("Partie créée avec succès (ID du match : %d)\n", id_match);
+            }
+            else
+            {
+                printf("Échec de création de partie.\n");
+            }
+            break;
+        case 4:
+            printf("Entrez votre pseudo : ");
+            scanf("%s", pseudo);
+            printf("Liste des joueurs :\n");
+            char **joueurs = fetchAllPlayers(pseudo);
+            for (int i = 0; joueurs[i] != NULL; i++)
+            {
+                printf("%s\n", joueurs[i]);
+                free(joueurs[i]);
+            }
+            free(joueurs);
+            break;
+        case 5:
+            printf("Entrez l'ID du match : ");
+            scanf("%d", &id_match);
+            printf("Entrez l'ID de la manche : ");
+            scanf("%d", &id_manche);
+            printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, RecupTheme(id_match, id_manche));
+            break;
+        case 6:
+            printf("Entrez votre pseudo : ");
+            scanf("%s", pseudo);
+            printf("Entrez l'ID de la partie : ");
+            scanf("%d", &id_match);
+            printf("Adversaire de %s pour la partie %d : %s\n", pseudo, id_match, getAdversaire(pseudo, id_match));
+            break;
+        case 7:
+            printf("Entrez l'ID du match : ");
+            scanf("%d", &id_match);
+            printf("Entrez l'ID de la manche : ");
+            scanf("%d", &id_manche);
+            printf("Résultat du changement de tour : %d\n", changementTour(id_match, id_manche));
+            break;
+        case 8:
+            printf("Entrez votre pseudo : ");
+            scanf("%s", pseudo);
+            printf("Entrez l'ID du match : ");
+            scanf("%d", &id_match);
+            printf("Résultat de la vérification du tour : %d\n", verifGame(pseudo, id_match));
+            break;
+        case 9:
+            printf("Entrez l'ID du match : ");
+            scanf("%d", &id_match);
+            printf("Prochaine manche : %d\n", nextManche(id_match));
+            break;
+        case 10:
+            // Demander les informations nécessaires
+            printf("Entrez le pseudo du joueur connecté : ");
+            scanf("%s", connected_pseudo);
+            printf("Entrez l'ID de la partie : ");
+            scanf("%d", &id_match);
+            printf("Entrez l'ID de la manche : ");
+            scanf("%d", &id_manche);
+
+            // Appel de la fonction pour récupérer le score du match de la partie
+            score = scoreGame(connected_pseudo, id_match, id_manche);
+            if (score != NULL)
+            {
+                printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
+                free(score); // Libérer la mémoire allouée pour le score
+            }
+            break;
+        case 11:
+            // Demander les informations nécessaires
+            printf("Entrez le pseudo du joueur connecté : ");
+            scanf("%s", connected_pseudo);
+            printf("Entrez l'ID de la partie : ");
+            scanf("%d", &id_match);
+
+            // Appel de la fonction pour récupérer le score du match de la partie
+            score = scorePartie(connected_pseudo, id_match);
+            if (score != NULL)
+            {
+                printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
+                free(score); // Libérer la mémoire allouée pour le score
+            }
+            break;
+        case 12:
+            printf("Entrez le pseudo du joueur connecté : ");
+            scanf("%s", connected_pseudo);
+            char *historique = fetchAllParties(connected_pseudo);
+            if (historique != NULL)
+            {
+                printf("Historique de toutes les parties pour le joueur %s : %s\n", connected_pseudo, historique);
+                free(historique); // Libérer la mémoire allouée pour l'historique
+            }
+            break;
+        case 0:
+            printf("Au revoir !\n");
+            break;
+        default:
+            printf("Choix invalide. Veuillez choisir une option valide.\n");
+            break;
         }
     } while (choix != 0);
 
