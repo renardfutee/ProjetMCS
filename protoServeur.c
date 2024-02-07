@@ -58,8 +58,8 @@ int main()
 void dialogueClt (sock_t sd, struct sockaddr_in clt) 
 {
 	int choix;  
-	rep_t rep; 
 	struct sigaction sa;
+	rep_t rep; 
 	
     	sa.sa_handler = signalHandler;
     	sigemptyset(&sa.sa_mask);
