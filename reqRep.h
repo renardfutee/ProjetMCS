@@ -2,7 +2,7 @@
 #include "data.h"
 
 #define MAX_SIZE 2000
-#define TEMPS 5
+#define TEMPS 15
 
 typedef void * generic;
 typedef char buff_t[MAX_SIZE]; 

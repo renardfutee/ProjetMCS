@@ -13,7 +13,7 @@
                     "id_manche": 1,
                     "theme": "Films de Spielberg",
                     "score1": 11,
-                    "score2": -1
+                    "score2": 20
                 },
                 {
                     "id_match": 1,
@@ -26,14 +26,14 @@
                     "id_match": 1,
                     "id_manche": 3,
                     "theme": "Fruits Jaunes",
-                    "score1": 2,
+                    "score1": -1,
                     "score2": 33
                 },
                 {
                     "id_match": 1,
                     "id_manche": 4,
                     "theme": "Synonymes de Petit",
-                    "score1": -1,
+                    "score1": 2,
                     "score2": -1
                 },
                 {
@@ -89,9 +89,51 @@
                     "score2": -1
                 }
             ]
+        },
+        {
+            "joueur1": "Mathis",
+            "joueur2": "Achrafe",
+            "score1": 0,
+            "score2": 0,
+            "id_match": 3,
+            "tour": "Mathis",
+            "parties": [
+                {
+                    "id_match": 3,
+                    "id_manche": 1,
+                    "theme": "Langues",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 3,
+                    "id_manche": 2,
+                    "theme": "Metiers Commencant par M",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 3,
+                    "id_manche": 3,
+                    "theme": "Personnages de la Bible",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 3,
+                    "id_manche": 4,
+                    "theme": "Synonymes de Petit",
+                    "score1": -1,
+                    "score2": -1
+                },
+                {
+                    "id_match": 3,
+                    "id_manche": 5,
+                    "theme": "Pays d'Afrique",
+                    "score1": -1,
+                    "score2": -1
+                }
+            ]
         }
     ]
-
 }
-
-

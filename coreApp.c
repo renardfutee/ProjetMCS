@@ -1677,178 +1677,178 @@ char *fetchAllPartiesIfNotTurn(const char *connected_pseudo)
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////
 
-int main()
-{
-    int choix;
-    char pseudo[20];
-    char recherchePseudo[20];
-    int id_match;
-    int id_manche;
-    const char *connected_pseudo;
-    char *score;
+// int main()
+// {
+//     int choix;
+//     char pseudo[20];
+//     char recherchePseudo[20];
+//     int id_match;
+//     int id_manche;
+//     const char *connected_pseudo;
+//     char *score;
 
-    do
-    {
-        // Affichage du menu
-        printf("\nMenu :\n");
-        printf("1. Connexion\n");
-        printf("2. Trouver un thème aléatoire\n");
-        printf("3. Créer une partie\n");
-        printf("4. Récupérer tous les joueurs\n");
-        printf("5. Récupérer un thème pour une manche donnée\n");
-        printf("6. Récupérer l'adversaire\n");
-        printf("7. Changer le tour de la partie\n");
-        printf("8. Vérifier le tour de jeu\n");
-        printf("9. Récupérer la prochaine manche\n");
-        printf("10. Récupérer le score de la manche\n");
-        printf("11. Récupérer le score de la partie\n");
-        printf("12. Historique de toutes les parties\n");
-        printf("13. Mettre à jour le score\n");
-        printf("0. Quitter\n");
-        printf("Votre choix : ");
-        scanf("%d", &choix);
+//     do
+//     {
+//         // Affichage du menu
+//         printf("\nMenu :\n");
+//         printf("1. Connexion\n");
+//         printf("2. Trouver un thème aléatoire\n");
+//         printf("3. Créer une partie\n");
+//         printf("4. Récupérer tous les joueurs\n");
+//         printf("5. Récupérer un thème pour une manche donnée\n");
+//         printf("6. Récupérer l'adversaire\n");
+//         printf("7. Changer le tour de la partie\n");
+//         printf("8. Vérifier le tour de jeu\n");
+//         printf("9. Récupérer la prochaine manche\n");
+//         printf("10. Récupérer le score de la manche\n");
+//         printf("11. Récupérer le score de la partie\n");
+//         printf("12. Historique de toutes les parties\n");
+//         printf("13. Mettre à jour le score\n");
+//         printf("0. Quitter\n");
+//         printf("Votre choix : ");
+//         scanf("%d", &choix);
 
-        // Actions selon le choix
-        switch (choix)
-        {
-        case 1:
-            printf("Entrez votre pseudo : ");
-            scanf("%s", pseudo);
-            if (connexion(pseudo) == 1)
-            {
-                printf("Connexion réussie pour le pseudo : %s\n", pseudo);
-            }
-            else
-            {
-                printf("Échec de connexion pour le pseudo : %s\n", pseudo);
-            }
-            break;
-        case 2:
-            printf("Thème aléatoire : %s\n", findRandomTheme());
-            break;
-        case 3:
-            printf("Entrez votre pseudo : ");
-            scanf("%s", pseudo);
-            printf("Entrez le pseudo recherché : ");
-            scanf("%s", recherchePseudo);
-            id_match = creategame(pseudo, recherchePseudo);
-            if (id_match != -1)
-            {
-                printf("Partie créée avec succès (ID du match : %d)\n", id_match);
-            }
-            else
-            {
-                printf("Échec de création de partie.\n");
-            }
-            break;
-        case 4:
-            printf("Entrez votre pseudo : ");
-            scanf("%s", pseudo);
-            printf("Liste des joueurs :\n");
-            char **joueurs = fetchAllPlayers(pseudo);
-            for (int i = 0; joueurs[i] != NULL; i++)
-            {
-                printf("%s\n", joueurs[i]);
-                free(joueurs[i]);
-            }
-            free(joueurs);
-            break;
-        case 5:
-            printf("Entrez l'ID du match : ");
-            scanf("%d", &id_match);
-            printf("Entrez l'ID de la manche : ");
-            scanf("%d", &id_manche);
-            printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, RecupTheme(id_match, id_manche));
-            break;
-        case 6:
-            printf("Entrez votre pseudo : ");
-            scanf("%s", pseudo);
-            printf("Entrez l'ID de la partie : ");
-            scanf("%d", &id_match);
-            printf("Adversaire de %s pour la partie %d : %s\n", pseudo, id_match, getAdversaire(pseudo, id_match));
-            break;
-        case 7:
-            printf("Entrez l'ID du match : ");
-            scanf("%d", &id_match);
-            printf("Entrez l'ID de la manche : ");
-            scanf("%d", &id_manche);
-            printf("Résultat du changement de tour : %d\n", changementTour(id_match, id_manche));
-            break;
-        case 8:
-            printf("Entrez votre pseudo : ");
-            scanf("%s", pseudo);
-            printf("Entrez l'ID du match : ");
-            scanf("%d", &id_match);
-            printf("Résultat de la vérification du tour : %d\n", verifGame(pseudo, id_match));
-            break;
-        case 9:
-            printf("Entrez l'ID du match : ");
-            scanf("%d", &id_match);
-            printf("Prochaine manche : %d\n", nextManche(id_match));
-            break;
-        case 10:
-            // Demander les informations nécessaires
-            printf("Entrez le pseudo du joueur connecté : ");
-            scanf("%s", connected_pseudo);
-            printf("Entrez l'ID de la partie : ");
-            scanf("%d", &id_match);
-            printf("Entrez l'ID de la manche : ");
-            scanf("%d", &id_manche);
+//         // Actions selon le choix
+//         switch (choix)
+//         {
+//         case 1:
+//             printf("Entrez votre pseudo : ");
+//             scanf("%s", pseudo);
+//             if (connexion(pseudo) == 1)
+//             {
+//                 printf("Connexion réussie pour le pseudo : %s\n", pseudo);
+//             }
+//             else
+//             {
+//                 printf("Échec de connexion pour le pseudo : %s\n", pseudo);
+//             }
+//             break;
+//         case 2:
+//             printf("Thème aléatoire : %s\n", findRandomTheme());
+//             break;
+//         case 3:
+//             printf("Entrez votre pseudo : ");
+//             scanf("%s", pseudo);
+//             printf("Entrez le pseudo recherché : ");
+//             scanf("%s", recherchePseudo);
+//             id_match = creategame(pseudo, recherchePseudo);
+//             if (id_match != -1)
+//             {
+//                 printf("Partie créée avec succès (ID du match : %d)\n", id_match);
+//             }
+//             else
+//             {
+//                 printf("Échec de création de partie.\n");
+//             }
+//             break;
+//         case 4:
+//             printf("Entrez votre pseudo : ");
+//             scanf("%s", pseudo);
+//             printf("Liste des joueurs :\n");
+//             char **joueurs = fetchAllPlayers(pseudo);
+//             for (int i = 0; joueurs[i] != NULL; i++)
+//             {
+//                 printf("%s\n", joueurs[i]);
+//                 free(joueurs[i]);
+//             }
+//             free(joueurs);
+//             break;
+//         case 5:
+//             printf("Entrez l'ID du match : ");
+//             scanf("%d", &id_match);
+//             printf("Entrez l'ID de la manche : ");
+//             scanf("%d", &id_manche);
+//             printf("Thème pour le match %d et la manche %d : %s\n", id_match, id_manche, RecupTheme(id_match, id_manche));
+//             break;
+//         case 6:
+//             printf("Entrez votre pseudo : ");
+//             scanf("%s", pseudo);
+//             printf("Entrez l'ID de la partie : ");
+//             scanf("%d", &id_match);
+//             printf("Adversaire de %s pour la partie %d : %s\n", pseudo, id_match, getAdversaire(pseudo, id_match));
+//             break;
+//         case 7:
+//             printf("Entrez l'ID du match : ");
+//             scanf("%d", &id_match);
+//             printf("Entrez l'ID de la manche : ");
+//             scanf("%d", &id_manche);
+//             printf("Résultat du changement de tour : %d\n", changementTour(id_match, id_manche));
+//             break;
+//         case 8:
+//             printf("Entrez votre pseudo : ");
+//             scanf("%s", pseudo);
+//             printf("Entrez l'ID du match : ");
+//             scanf("%d", &id_match);
+//             printf("Résultat de la vérification du tour : %d\n", verifGame(pseudo, id_match));
+//             break;
+//         case 9:
+//             printf("Entrez l'ID du match : ");
+//             scanf("%d", &id_match);
+//             printf("Prochaine manche : %d\n", nextManche(id_match));
+//             break;
+//         case 10:
+//             // Demander les informations nécessaires
+//             printf("Entrez le pseudo du joueur connecté : ");
+//             scanf("%s", connected_pseudo);
+//             printf("Entrez l'ID de la partie : ");
+//             scanf("%d", &id_match);
+//             printf("Entrez l'ID de la manche : ");
+//             scanf("%d", &id_manche);
 
-            // Appel de la fonction pour récupérer le score du match de la partie
-            score = scoreGame(connected_pseudo, id_match, id_manche);
-            if (score != NULL)
-            {
-                printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
-                free(score); // Libérer la mémoire allouée pour le score
-            }
-            break;
-        case 11:
-            // Demander les informations nécessaires
-            printf("Entrez le pseudo du joueur connecté : ");
-            scanf("%s", connected_pseudo);
-            printf("Entrez l'ID de la partie : ");
-            scanf("%d", &id_match);
+//             // Appel de la fonction pour récupérer le score du match de la partie
+//             score = scoreGame(connected_pseudo, id_match, id_manche);
+//             if (score != NULL)
+//             {
+//                 printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
+//                 free(score); // Libérer la mémoire allouée pour le score
+//             }
+//             break;
+//         case 11:
+//             // Demander les informations nécessaires
+//             printf("Entrez le pseudo du joueur connecté : ");
+//             scanf("%s", connected_pseudo);
+//             printf("Entrez l'ID de la partie : ");
+//             scanf("%d", &id_match);
 
-            // Appel de la fonction pour récupérer le score du match de la partie
-            score = scorePartie(connected_pseudo, id_match);
-            if (score != NULL)
-            {
-                printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
-                free(score); // Libérer la mémoire allouée pour le score
-            }
-            break;
-        case 12:
-            printf("Entrez le pseudo du joueur connecté : ");
-            scanf("%s", connected_pseudo);
-            char *historique = fetchAllParties(connected_pseudo);
-            if (historique != NULL)
-            {
-                printf("Historique de toutes les parties pour le joueur %s : %s\n", connected_pseudo, historique);
-                free(historique); // Libérer la mémoire allouée pour l'historique
-            }
-            break;
-        case 13:
-            char mot[20];
-            printf("Entrez le pseudo du joueur connecté : ");
-            scanf("%s", connected_pseudo);
-            printf("Entrez l'ID du match : ");
-            scanf("%d", &id_match);
-            printf("Entrez l'ID de la manche : ");
-            scanf("%d", &id_manche);
-            printf("Entrez le mot : ");
-            scanf("%s", mot);
-            printf("Résultat de la mise à jour du score : %s\n", mettreAJourScore(id_match, id_manche, connected_pseudo, mot));
-        case 0:
-            printf("Au revoir !\n");
-            break;
-        default:
-            printf("Choix invalide. Veuillez choisir une option valide.\n");
-            break;
-        }
-    } while (choix != 0);
+//             // Appel de la fonction pour récupérer le score du match de la partie
+//             score = scorePartie(connected_pseudo, id_match);
+//             if (score != NULL)
+//             {
+//                 printf("Score de la partie pour le joueur %s : %s\n", connected_pseudo, score);
+//                 free(score); // Libérer la mémoire allouée pour le score
+//             }
+//             break;
+//         case 12:
+//             printf("Entrez le pseudo du joueur connecté : ");
+//             scanf("%s", connected_pseudo);
+//             char *historique = fetchAllParties(connected_pseudo);
+//             if (historique != NULL)
+//             {
+//                 printf("Historique de toutes les parties pour le joueur %s : %s\n", connected_pseudo, historique);
+//                 free(historique); // Libérer la mémoire allouée pour l'historique
+//             }
+//             break;
+//         case 13:
+//             char mot[20];
+//             printf("Entrez le pseudo du joueur connecté : ");
+//             scanf("%s", connected_pseudo);
+//             printf("Entrez l'ID du match : ");
+//             scanf("%d", &id_match);
+//             printf("Entrez l'ID de la manche : ");
+//             scanf("%d", &id_manche);
+//             printf("Entrez le score à ajouter : ");
+//             scanf("%s", mot);
+//             printf("Résultat de la mise à jour du score : %s\n", mettreAJourScore(id_match, id_manche, connected_pseudo, mot));
+//         case 0:
+//             printf("Au revoir !\n");
+//             break;
+//         default:
+//             printf("Choix invalide. Veuillez choisir une option valide.\n");
+//             break;
+//         }
+//     } while (choix != 0);
 
-    return 0;
-}
+//     return 0;
+// }
 
 ///////////////////////////////////////////////////////////////////////////////// TESTS /////////////////////////////////////////////////////////////////////////////////

@@ -190,18 +190,17 @@ void verifUser(rep_t * rep, char * adv)
 
 void listerPartieMonTour(rep_t * rep, reqSimple_t req)
 {
-	//TODO récuperer toutes les parties ou le tour = pseudo dans une seule chaine de caractère ==> "5_Agathe:1-5; 6_Achraf:2-6;" 
+	char * chaine = fetchAllPartiesIfTurn(req.msg);
 	printf("---> L'utilisateur '%s' souhaite lister les parties ou c'est sont tour\n", req.msg); 
 	
 	rep->nb = 1; 
-	strcpy(rep->msg, "5_Agathe:1-5; 6_Achraf:2-6;"); 
+	strcpy(rep->msg, chaine); 
 }
 
 void getProchaineManche(rep_t * rep, reqSimple_t req)
 {
 	int manche = nextManche(atoi(req.msg));
 
-	// TODO retourner le numéro de la prochaine manche à faire (ou 0 si le jeu est terminé) 
 	printf("---> Récuperer le numéro de la prochaine manche de la partie %d\n", atoi(req.msg)); 
 	printf("Prochaine manche : %d\n", nextManche(atoi(req.msg))); 
 	rep->nb = manche; 
@@ -242,7 +241,7 @@ void verif_jouer(rep_t * rep, reqSimple_t req)
 	int result; 
 	char chaine[MAX_BUFF]; 
 	reqComplete_t reqComplete; 
-
+    // TODO
 	printf("Debut de la fonciton verif\n"); 
 	deSerialComplete(&reqComplete, &req);
 	printf("%d--->L'utilisateur %s souhaite jouer à la partie d'identifiant %d  ", req.nb, reqComplete.msg, atoi(reqComplete.msg2)); 
