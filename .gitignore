@@ -9,5 +9,6 @@ coreApp
 test
 
 test.c
+token.txt
 
 /jsons

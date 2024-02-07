@@ -112,6 +112,7 @@ char *scorePartie(const char *connected_pseudo, int id_match);
  * @param connected_pseudo 
  * @return char* 
  */
+<<<<<<< HEAD
 char *fetchAllParties(const char *connected_pseudo);// // connexion() recherche le pseudo dans le json si n'est pas le créer (minimum 3 lettres) sinon le connecte(renvoie 1) dans le json jsons/pseudos.json
 // qui est sous la forme :
 
@@ -227,3 +228,6 @@ char *scorePartie(const char *connected_pseudo, int id_match);
  * @return char* 
  */
 char *fetchAllParties(const char *connected_pseudo);
+=======
+char *fetchAllParties(const char *connected_pseudo);
+>>>>>>> 325d175aa1e1591f616a57e3a5e2b5fb62aca824
